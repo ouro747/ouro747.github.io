@@ -1,0 +1,4 @@
+const cssParts=['/parts/style-01.txt', '/parts/style-02.txt'];
+const jsParts=['/parts/app-01.txt', '/parts/app-02.txt', '/parts/app-03.txt', '/parts/app-04.txt'];
+async function loadText(parts){let s='';for(const p of parts){const r=await fetch(p);if(!r.ok)throw new Error(`Falha ao carregar ${p}`);s+=await r.text()}return s}
+try{const css=await loadText(cssParts);const st=document.createElement('style');st.textContent=css;document.head.appendChild(st);const src=await loadText(jsParts);const url=URL.createObjectURL(new Blob([src],{type:'text/javascript'}));await import(url);URL.revokeObjectURL(url)}catch(err){console.error(err);document.querySelector('#app').innerHTML='<main style="padding:40px;font-family:system-ui"><h1>Global Pharma</h1><p>Não foi possível carregar a aplicação.</p></main>'}

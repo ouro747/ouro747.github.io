@@ -122,6 +122,161 @@ function pdp(slug){const p=findProduct(slug);if(!p)return shell(`<main class="se
  ${isVisible(p,'reviews')&&p.reviews?.length?`<section class="pdp-section"><h2>${esc(c.reviewsTitle||'Experiência de compra')}</h2><div class="social-grid">${p.reviews.slice(0,3).map(r=>`<div class="social-item card" style="padding:14px"><strong>${esc(r.author)}</strong><span>${esc(r.topic||'')}</span><p class="pdp-sub">${esc(r.text)}</p></div>`).join('')}</div></section>`:''}
  ${isVisible(p,'related')&&related.length?`<section class="pdp-section"><h2>${esc(c.relatedTitle||'Também disponíveis')}</h2><div class="related-grid">${related.map(productCard).join('')}</div></section>`:''}</div><div class="sticky-buy"><div><div class="price-kicker">A partir de</div><strong>${money(price)}</strong></div><button class="btn btn-primary" data-buy="${esc(p.slug)}">COMPRAR AGORA</button></div></main>`)}
 
+function expressDeliveryPage(){
+ const filmingSteps=[
+  ['Mostre a caixa ainda fechada.','Filme todos os lados, incluindo a parte de cima e a parte de baixo.'],
+  ['Registre a etiqueta e os lacres.','Deixe visíveis a identificação da encomenda, as fitas e eventuais sinais de dano ou violação.'],
+  ['Abra a caixa sem interromper a gravação.','Mantenha a embalagem no enquadramento durante a abertura.'],
+  ['Mostre todo o conteúdo recebido.','Registre os itens, as quantidades e o estado das embalagens, sem romper os lacres dos produtos.'],
+  ['Aproxime a câmera de qualquer problema.','Mostre claramente danos, vazamentos, itens divergentes ou outros sinais que precisem de conferência.'],
+  ['Guarde o arquivo original.','Se precisar de atendimento, encaminhe o vídeo sem cortes ou edições pelo nosso canal oficial.']
+ ];
+ const deadlines=[
+  ['Postagem após a confirmação do pagamento','[PREENCHER PRAZO REAL]'],
+  ['Disponibilização do rastreamento','[PREENCHER PRAZO REAL]'],
+  ['Entrega estimada','[INFORMAR ONDE O CLIENTE CONSULTA]'],
+  ['Primeira resposta a uma solicitação','[PREENCHER PRAZO REAL]'],
+  ['Conferência da ocorrência','[PREENCHER PRAZO REAL E MARCO INICIAL]'],
+  ['Postagem do reenvio após a confirmação e escolha do cliente','[PREENCHER PRAZO REAL]'],
+  ['Solicitação ou execução do reembolso após a confirmação','[PREENCHER PRAZO REAL POR MEIO DE PAGAMENTO]']
+ ];
+ const faqs=[
+  ['Preciso contratar a proteção separadamente?','Não. Ela já está incluída em todos os pedidos, sem cobrança adicional.'],
+  ['Se houver extravio, preciso pagar outro frete?','Não. No reenvio de uma ocorrência coberta, os custos dos produtos e do novo frete ficam por nossa conta.'],
+  ['Posso escolher o reembolso mesmo havendo possibilidade de reenvio?','Sim. Confirmada a ocorrência coberta, a escolha entre as alternativas é sua.'],
+  ['"Em fiscalização" no rastreamento significa que meu pedido foi perdido?','Esse status, por si só, não confirma perda nem impedimento de entrega. Nossa equipe verifica a situação e explica o encaminhamento.'],
+  ['Por que vocês pedem a filmagem da abertura?','Porque o vídeo registra as condições da caixa antes da abertura e o conteúdo encontrado dentro dela. Isso agiliza a análise de danos ou divergências.'],
+  ['Preciso publicar o vídeo em alguma rede social?','Não. Se houver necessidade de análise, envie o arquivo diretamente pelo canal oficial de atendimento.'],
+  ['A proteção garante uma data exata de chegada?','O prazo de entrega é informado conforme o destino e a modalidade contratada. A proteção estabelece a solução para as ocorrências cobertas descritas nesta página.']
+ ];
+ return shell(`<main class="express-page">
+  <section class="express-hero">
+   <div class="container express-hero-grid">
+    <div class="express-hero-copy">
+     <span class="express-eyebrow">ENTREGA EXPRESSA · PROTEÇÃO INCLUSA EM TODOS OS PEDIDOS</span>
+     <h1>Seu pedido protegido até chegar na sua porta.</h1>
+     <p class="express-lead">Quem compra anabolizante pela internet sabe o que pode acontecer no caminho: a encomenda se perder, ficar presa na fiscalização ou chegar com a caixa violada. Você não deveria carregar esse risco sozinho.</p>
+     <p>Por isso, todo pedido sai com proteção contra <strong>extravio no transporte</strong> e <strong>retenção pela fiscalização que impeça a entrega</strong>. Confirmada uma dessas ocorrências, você escolhe: <strong>reenvio sem custo adicional ou reembolso integral do pedido.</strong></p>
+     <p>A proteção já está incluída. Não existe taxa, adesão ou letra miúda para ativá-la.</p>
+     <div class="express-pills"><span>R$ 0 de taxa de proteção</span><span>Reenvio ou reembolso</span><span>Atendimento direto com nossa equipe</span></div>
+     <div class="express-actions"><a class="btn btn-primary btn-lg" href="#cobertura">ENTENDER MINHA PROTEÇÃO</a><a class="btn btn-secondary btn-lg" href="/contato" data-route>PRECISO DE AJUDA COM MEU PEDIDO</a></div>
+     <small>Confira abaixo as situações cobertas, como filmar seu recebimento e os prazos de atendimento. Reenvios dependem da possibilidade legal de realizar uma nova entrega.</small>
+    </div>
+    <div class="express-hero-panel">
+     <span class="express-panel-kicker">Proteção de Entrega</span>
+     <strong>R$ 0</strong>
+     <p>de taxa adicional para ativar a proteção do pedido.</p>
+     <div class="express-panel-list"><span>✓ Extravio confirmado</span><span>✓ Retenção que impeça a entrega</span><span>✓ Reenvio ou reembolso</span></div>
+    </div>
+   </div>
+  </section>
+
+  <section class="express-section">
+   <div class="container express-split">
+    <div><span class="express-index">01</span><span class="express-kicker">Por que fazemos isso</span><h2>Nossa responsabilidade continua depois do envio.</h2></div>
+    <div class="express-copy">
+     <p>Comprar anabolizante online exige confiança ainda maior do que comprar qualquer outra coisa. Você paga, organiza sua rotina de treino e espera receber exatamente o que escolheu — e sabe que, se algo der errado no transporte, o prejuízo é seu dinheiro, seu tempo e seu ciclo parado.</p>
+     <p>Por isso nosso compromisso acompanha o pedido até a entrega. Quando uma encomenda se perde ou fica impedida de chegar, a gente resolve: você fala direto com nossa equipe, acompanha o atendimento e escolhe entre as alternativas disponíveis.</p>
+     <strong class="express-emphasis">Cuidar da sua compra faz parte do nosso trabalho — do pagamento até a caixa na sua mão.</strong>
+    </div>
+   </div>
+  </section>
+
+  <section class="express-section express-soft">
+   <div class="container">
+    <div class="express-heading"><span class="express-index">02</span><span class="express-kicker">Proteção sem cobrança adicional</span><h2>Quanto você paga pela proteção?<br>Zero.</h2><p>A Proteção de Entrega está incluída em todos os pedidos, sem contratação separada e sem acréscimo percentual para ativá-la.</p></div>
+    <div class="express-cost-grid">
+     <div class="express-zero-card"><small>Custo da proteção</small><strong>R$ 0</strong><span>incluída em todos os pedidos</span></div>
+     <div class="express-compare card">
+      <p>Para visualizar a diferença, considere uma compra de R$ 500:</p>
+      <div class="express-compare-row"><span>Se fosse cobrada uma taxa de 30%</span><strong>R$ 150</strong></div>
+      <div class="express-compare-row highlight"><span>Com nossa Proteção de Entrega</span><strong>R$ 0</strong></div>
+      <small>Exemplo matemático ilustrativo; não representa uma pesquisa de preços do mercado.</small>
+     </div>
+    </div>
+    <p class="express-note"><strong>A gratuidade se refere à proteção.</strong> O frete da compra, quando houver, é informado separadamente antes do pagamento.</p>
+   </div>
+  </section>
+
+  <section class="express-section" id="cobertura">
+   <div class="container">
+    <div class="express-heading"><span class="express-index">03</span><span class="express-kicker">Cobertura</span><h2>Você sabe como vamos agir antes de precisar de ajuda.</h2></div>
+    <div class="express-card-grid three">
+     <article class="express-card"><span class="express-card-num">01</span><h3>Extravio durante o transporte</h3><p>Se o extravio da encomenda for confirmado, você escolhe um novo envio sem custo adicional ou o reembolso integral do pedido. Nossa equipe acompanha a ocorrência com a transportadora e mantém você informado em cada etapa.</p></article>
+     <article class="express-card"><span class="express-card-num">02</span><h3>Retenção pela fiscalização que impeça a entrega</h3><p>Se houver retenção confirmada que impeça a entrega, nossa equipe apresenta as alternativas para resolver seu pedido. Você escolhe entre reenvio, quando legalmente permitido, e reembolso integral. Se houver impedimento legal para um novo envio, a solução será o reembolso.</p></article>
+     <article class="express-card"><span class="express-card-num">03</span><h3>Problema identificado ao abrir a caixa</h3><p>Se perceber dano, violação ou divergência no conteúdo — caixa amassada, lacre rompido, item errado ou faltando — registre o ocorrido e fale com nossa equipe.</p><p>A filmagem da caixa e da abertura mostra as condições do recebimento e permite uma conferência mais objetiva.</p></article>
+    </div>
+    <div class="express-center-action"><a class="btn btn-primary" href="/contato" data-route>SOLICITAR ATENDIMENTO</a></div>
+   </div>
+  </section>
+
+  <section class="express-section express-deep">
+   <div class="container">
+    <div class="express-heading light"><span class="express-index">04</span><span class="express-kicker">A escolha é do cliente</span><h2>Reenvio ou reembolso.<br>Você escolhe como prefere resolver.</h2><p>Confirmada uma ocorrência coberta, iniciamos imediatamente o procedimento que você escolher.</p></div>
+    <div class="express-choice-grid">
+     <article class="express-choice"><span>01</span><h3>Quero receber meu pedido</h3><p>Organizamos o reenvio sem cobrança pelos produtos nem pelo novo frete, conforme disponibilidade e possibilidade legal de envio. Você recebe a confirmação da nova postagem e o código para acompanhar a entrega.</p></article>
+     <article class="express-choice"><span>02</span><h3>Prefiro meu dinheiro de volta</h3><p>Providenciamos o reembolso integral do pedido não entregue, incluindo o frete originalmente pago à nossa loja, quando houver. A devolução é feita em dinheiro pelo meio de pagamento aplicável. Crédito para compras futuras só será utilizado se você escolher essa opção.</p></article>
+    </div>
+    <small class="express-deep-note">Os prazos de conferência, postagem e processamento do reembolso estão apresentados nesta página.</small>
+   </div>
+  </section>
+
+  <section class="express-section">
+   <div class="container">
+    <div class="express-heading"><span class="express-index">05</span><span class="express-kicker">Como filmar sua encomenda</span><h2>Sua encomenda chegou?<br>Comece a filmar antes de abrir.</h2><p>Esse vídeo é a sua garantia de que o produto chegou intacto — e é o que agiliza qualquer atendimento. Grave <strong>um único vídeo contínuo</strong>, mostrando a caixa ainda fechada e, em seguida, toda a abertura:</p></div>
+    <div class="express-steps">${filmingSteps.map((s,i)=>`<article class="express-step"><span>${String(i+1).padStart(2,'0')}</span><div><h3>${esc(s[0])}</h3><p>${esc(s[1])}</p></div></article>`).join('')}</div>
+    <div class="express-alert"><strong>Se a caixa já chegar aberta ou danificada, registre exatamente como foi recebida.</strong><p>Não tente refazer a embalagem.</p></div>
+    <p class="express-emphasis">A filmagem comprova o estado do pedido na chegada e agiliza a solução de qualquer ocorrência.</p>
+    <div class="express-mini-grid">
+     <article class="card express-mini"><h3>Seu pedido não chegou?</h3><p>Em casos de extravio ou retenção, não há exigência de vídeo de abertura. A conferência usa os registros de transporte e os documentos disponíveis sobre a ocorrência.</p></article>
+     <article class="card express-mini"><h3>Não conseguiu filmar?</h3><p>Fale com a gente mesmo assim. Vamos orientar a apresentação de outros registros e analisar o caso, preservando os direitos previstos na legislação aplicável.</p></article>
+    </div>
+   </div>
+  </section>
+
+  <section class="express-section express-soft">
+   <div class="container">
+    <div class="express-heading"><span class="express-index">06</span><span class="express-kicker">Prazos</span><h2>Você precisa saber quando esperar.<br>E quando receber uma resposta.</h2><p>O prazo de entrega considera o destino e a modalidade de transporte disponível para o seu pedido. Para facilitar o acompanhamento, informamos separadamente:</p></div>
+    <div class="express-table-wrap"><table class="express-table"><thead><tr><th>Etapa</th><th>Prazo</th></tr></thead><tbody>${deadlines.map(([stage,time])=>`<tr><td>${esc(stage)}</td><td><strong>${esc(time)}</strong></td></tr>`).join('')}</tbody></table></div>
+    <div class="express-note-stack"><p>Em pagamentos por cartão, o prazo para o crédito aparecer na fatura também depende do processamento da administradora.</p><p>Se o prazo informado para sua entrega terminar e o pedido não chegar, entre em contato para iniciarmos a verificação.</p></div>
+    <a class="btn btn-primary" href="/rastreamento" data-route>CONSULTAR MEU PEDIDO</a>
+   </div>
+  </section>
+
+  <section class="express-section">
+   <div class="container">
+    <div class="express-heading"><span class="express-index">07</span><span class="express-kicker">Como pedir ajuda</span><h2>Um caminho claro para resolver.</h2></div>
+    <div class="express-process-grid">
+     <article><span>01</span><h3>Entre em contato pelo canal oficial</h3><p>Informe o número do pedido e descreva o que aconteceu.</p></article>
+     <article><span>02</span><h3>Envie os registros disponíveis</h3><p>Para problemas no recebimento, encaminhe o vídeo e as imagens que mostrem a situação. Para extravio ou retenção, envie a comunicação recebida, caso tenha alguma.</p></article>
+     <article><span>03</span><h3>Acompanhe a conferência</h3><p>Nossa equipe informa o andamento e explica se alguma informação adicional é necessária.</p></article>
+     <article><span>04</span><h3>Escolha a solução</h3><p>Confirmada a cobertura, você escolhe reenvio ou reembolso, observadas as condições apresentadas nesta página.</p></article>
+    </div>
+    <div class="express-contact card"><div><small>Canal oficial</small><strong>[INSERIR CONTATO]</strong></div><div><small>Horário de atendimento</small><strong>[INSERIR DIAS, HORÁRIOS E FUSO]</strong></div><a class="btn btn-primary" href="/contato" data-route>RESOLVER UM PROBLEMA COM MINHA ENTREGA</a></div>
+   </div>
+  </section>
+
+  <section class="express-section express-soft">
+   <div class="container express-faq-wrap">
+    <div class="express-heading"><span class="express-index">08</span><span class="express-kicker">Perguntas frequentes</span><h2>As dúvidas mais importantes, respondidas direto.</h2></div>
+    <div class="express-faq">${faqs.map(([q,ans])=>`<details class="express-faq-item"><summary>${esc(q)}</summary><p>${esc(ans)}</p></details>`).join('')}</div>
+   </div>
+  </section>
+
+  <section class="express-closing">
+   <div class="container">
+    <span class="express-index">09</span><span class="express-kicker">Confiança</span>
+    <h2>Sua confiança merece uma resposta concreta.</h2>
+    <p>Proteção incluída, informações claras e uma equipe responsável por acompanhar o seu pedido do pagamento à entrega.</p>
+    <p>Se houver uma ocorrência coberta, você sabe com quem falar e quais soluções pode escolher.</p>
+    <strong>Reenvio sem custo adicional ou reembolso integral.<br>Proteção gratuita em todos os pedidos.</strong>
+    <div class="express-actions"><a class="btn btn-primary btn-lg" href="/contato" data-route>TIRAR DÚVIDAS SOBRE A ENTREGA</a><a class="btn btn-secondary btn-lg" href="/contato" data-route>SOLICITAR ATENDIMENTO</a></div>
+    <small>Esta política de proteção comercial não limita os direitos do consumidor previstos na legislação aplicável.</small>
+   </div>
+  </section>
+ </main>`);
+}
+
 function genericPage(title,text){return shell(`<main><section class="page-hero"><div class="container"><span class="badge">Global Pharma</span><h1>${esc(title)}</h1><p>${esc(text)}</p></div></section><section class="section"><div class="container"><div class="card info-block"><h2>${esc(title)}</h2><p class="pdp-sub">${esc(text)}</p></div></div></section></main>`)}
 
 function checkout(){const items=state.cart.map(i=>({i,p:state.products.find(p=>p.slug===i.slug)})).filter(x=>x.p);const total=items.reduce((a,{i,p})=>a+(i.shipping==='express'&&p.expressAvailable?p.pricing.express:p.pricing.basic)*i.qty,0);return shell(`<main><section class="page-hero"><div class="container"><span class="badge">Checkout</span><h1>Finalizar pedido</h1><p>Estrutura visual pronta. A conexão com PYX Gate será plugada no adapter de pagamento, sem expor segredo no navegador.</p></div></section><section class="section" style="padding-top:20px"><div class="container checkout-grid"><form id="checkoutForm" class="card info-block"><h2>Dados do cliente</h2><div class="form-grid"><div class="field"><label>Nome completo</label><input class="input" name="name" required></div><div class="field"><label>CPF</label><input class="input" name="document" required></div><div class="field"><label>E-mail</label><input class="input" type="email" name="email" required></div><div class="field"><label>Telefone</label><input class="input" name="phone" required></div><div class="field"><label>CEP</label><input class="input" name="postal" required></div><div class="field"><label>Cidade</label><input class="input" name="city" required></div><div class="field"><label>Estado</label><input class="input" name="state" required></div><div class="field full"><label>Endereço</label><input class="input" name="address" required></div></div><button class="btn btn-primary" style="width:100%;margin-top:16px">GERAR PAGAMENTO (MODO DEMO)</button></form><aside class="card summary"><h2>Resumo</h2>${items.length?items.map(({i,p})=>`<div class="summary-line"><span>${esc(p.displayName)} × ${i.qty}</span><strong>${money((i.shipping==='express'?p.pricing.express:p.pricing.basic)*i.qty)}</strong></div>`).join(''):`<div class="empty">Seu carrinho está vazio.</div>`}<div class="summary-line summary-total"><span>Total</span><span>${money(total)}</span></div></aside></div></section></main>`)}
@@ -158,7 +313,7 @@ function getByPath(obj,path){return path.split('.').reduce((a,k)=>a?.[k],obj)}
 function setByPath(obj,path,value){const parts=path.split('.');let cur=obj;parts.forEach((k,i)=>{const last=i===parts.length-1;if(last){cur[k]=value;return}const next=parts[i+1];if(cur[k]==null)cur[k]=/^\d+$/.test(next)?[]:{};cur=cur[k]})}
 function collectEditor(){const p=structuredClone(state.adminEditing);const form=document.querySelector('#productEditorForm');if(!form)return p;form.querySelectorAll('[name]').forEach(el=>{const name=el.name;if(name.startsWith('visibility.')){const k=name.split('.')[1];p.sectionVisibility=p.sectionVisibility||{};p.sectionVisibility[k]=el.checked;return}let val=el.value;if(el.dataset.json==='true'){try{val=val.trim()?JSON.parse(val):[]}catch{toast('Há um campo JSON inválido.');throw new Error('JSON inválido em '+name)}}if(el.type==='number')val=val===''?null:Number(val);if(['isActive','expressAvailable','requiresRefrigeration','prescriptionRequired'].includes(name))val=val==='true';setByPath(p,name,val)});p.slug=slugify(p.slug||p.name);p.displayName=p.displayName||p.name;return normalizeProduct(p)}
 
-function render(){const path=location.pathname;let html;if(path==='/')html=home();else if(path==='/produtos')html=productsPage();else if(path.startsWith('/produto/'))html=pdp(decodeURIComponent(path.split('/')[2]||''));else if(path==='/checkout')html=checkout();else if(path==='/admin')html=(state.isAdmin&&!state.mustChangePassword)?adminOverview():adminAccess();else if(path==='/admin/produtos')html=(state.isAdmin&&!state.mustChangePassword)?adminProducts():adminAccess();else if(path==='/entrega')html=genericPage('Entrega','Consulte modalidades, prazos e condições logísticas disponíveis por produto.');else if(path==='/transparencia')html=genericPage('Transparência','Documentação, procedência e informações oficiais aparecem somente quando cadastradas.');else if(path==='/rastreamento')html=genericPage('Rastreamento','Área preparada para consulta de pedidos e acompanhamento logístico.');else if(path==='/contato')html=genericPage('Contato','Canal de atendimento da Global Pharma.');else if(path==='/ajuda')html=genericPage('Ajuda','Central de suporte e dúvidas frequentes.');else if(path==='/termos')html=genericPage('Termos de uso','Conteúdo jurídico será conectado à versão definitiva.');else if(path==='/privacidade')html=genericPage('Privacidade','Política de privacidade será conectada à versão definitiva.');else if(path==='/trocas-e-devolucoes')html=genericPage('Trocas e devoluções','Política operacional será conectada à versão definitiva.');else html=genericPage('Página não encontrada','O endereço solicitado não existe.');app.innerHTML=html;bind();}
+function render(){const path=location.pathname;let html;if(path==='/')html=home();else if(path==='/produtos')html=productsPage();else if(path.startsWith('/produto/'))html=pdp(decodeURIComponent(path.split('/')[2]||''));else if(path==='/checkout')html=checkout();else if(path==='/admin')html=(state.isAdmin&&!state.mustChangePassword)?adminOverview():adminAccess();else if(path==='/admin/produtos')html=(state.isAdmin&&!state.mustChangePassword)?adminProducts():adminAccess();else if(path==='/entrega')html=expressDeliveryPage();else if(path==='/transparencia')html=genericPage('Transparência','Documentação, procedência e informações oficiais aparecem somente quando cadastradas.');else if(path==='/rastreamento')html=genericPage('Rastreamento','Área preparada para consulta de pedidos e acompanhamento logístico.');else if(path==='/contato')html=genericPage('Contato','Canal de atendimento da Global Pharma.');else if(path==='/ajuda')html=genericPage('Ajuda','Central de suporte e dúvidas frequentes.');else if(path==='/termos')html=genericPage('Termos de uso','Conteúdo jurídico será conectado à versão definitiva.');else if(path==='/privacidade')html=genericPage('Privacidade','Política de privacidade será conectada à versão definitiva.');else if(path==='/trocas-e-devolucoes')html=genericPage('Trocas e devoluções','Política operacional será conectada à versão definitiva.');else html=genericPage('Página não encontrada','O endereço solicitado não existe.');app.innerHTML=html;bind();}
 
 function bind(){
  document.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>addToCart(b.dataset.add));

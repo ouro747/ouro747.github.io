@@ -1,0 +1,9 @@
+{
+  "name": "global-pharma-site",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "check": "node --check app.js && node --check data.js",
+    "serve": "python3 -m http.server 4173"
+  }
+}

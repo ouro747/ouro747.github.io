@@ -127,3 +127,116 @@ body.cart-is-open{overflow:hidden}
   .icon-btn svg{width:20px;height:20px}
   .cart-drawer{width:100%}
 }
+
+
+/* Express delivery landing page */
+.express-page{background:#fff}
+.express-hero{padding:54px 0 42px;background:linear-gradient(135deg,#f8fbff 0%,#edf4fc 55%,#fff 100%);border-bottom:1px solid var(--line)}
+.express-hero-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,.65fr);gap:42px;align-items:center}
+.express-eyebrow,.express-kicker{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--blue)}
+.express-hero h1{font-size:clamp(48px,6vw,82px);max-width:900px;margin:12px 0 16px}
+.express-hero-copy>p{max-width:820px;font-size:15px;line-height:1.7;color:var(--slate-700)}
+.express-lead{font-size:17px!important;color:var(--ink)!important}
+.express-pills{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0}
+.express-pills span{padding:8px 11px;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:11px;font-weight:800;color:var(--navy)}
+.express-actions{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0 14px}
+.express-hero-copy>small{display:block;max-width:760px;color:var(--slate-500);line-height:1.5}
+.express-hero-panel{border-radius:24px;padding:30px;background:linear-gradient(150deg,#061d4d,#0d3c82);color:#fff;box-shadow:0 24px 60px rgba(6,29,77,.18)}
+.express-panel-kicker{font-size:10px;text-transform:uppercase;letter-spacing:.16em;color:#a9c6f2;font-weight:800}
+.express-hero-panel>strong{display:block;font-family:"Bebas Neue",Inter,sans-serif;font-size:82px;line-height:.95;margin:16px 0 6px}
+.express-hero-panel p{color:#d8e5f7;line-height:1.55}
+.express-panel-list{display:grid;gap:10px;margin-top:22px;padding-top:18px;border-top:1px solid rgba(255,255,255,.15)}
+.express-panel-list span{font-size:13px;font-weight:700}
+
+.express-section{padding:70px 0}
+.express-soft{background:var(--soft)}
+.express-deep{background:linear-gradient(135deg,#061d4d,#0a2c62);color:#fff}
+.express-split{display:grid;grid-template-columns:.8fr 1.2fr;gap:54px;align-items:start}
+.express-index{display:block;font-family:"Bebas Neue",Inter,sans-serif;font-size:42px;color:#b4c8e6;line-height:1;margin-bottom:12px}
+.express-section h2,.express-closing h2{font-size:clamp(38px,4.5vw,62px);max-width:900px;margin:10px 0 18px}
+.express-copy p,.express-heading p,.express-note-stack p{font-size:15px;line-height:1.7;color:var(--slate-700)}
+.express-emphasis{display:block;margin-top:22px;padding-left:16px;border-left:3px solid var(--blue);font-size:18px;line-height:1.5;color:var(--navy)}
+.express-heading{max-width:900px;margin-bottom:28px}
+.express-heading.light h2{color:#fff}
+.express-heading.light p{color:#c9d9ef}
+.express-deep .express-index{color:#5f85bb}
+.express-deep .express-kicker{color:#9ec2f0}
+.express-cost-grid{display:grid;grid-template-columns:.55fr 1.45fr;gap:18px;align-items:stretch}
+.express-zero-card{border-radius:20px;background:linear-gradient(145deg,#0756c7,#053587);color:#fff;padding:28px;display:flex;flex-direction:column;justify-content:center;min-height:220px}
+.express-zero-card small{text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:#c9dcfb}
+.express-zero-card strong{font-family:"Bebas Neue",Inter,sans-serif;font-size:78px;line-height:1;margin:10px 0}
+.express-zero-card span{font-size:13px;color:#dbe8fa}
+.express-compare{padding:24px}
+.express-compare>p{margin-top:0;color:var(--slate-700)}
+.express-compare-row{display:flex;justify-content:space-between;gap:20px;padding:16px 0;border-top:1px solid var(--line)}
+.express-compare-row strong{font-size:20px;color:var(--navy)}
+.express-compare-row.highlight{background:#eef5ff;margin:0 -12px;padding:16px 12px;border-radius:10px}
+.express-compare-row.highlight strong{color:var(--blue)}
+.express-note{margin:16px 0 0;color:var(--slate-700);font-size:13px}
+.express-card-grid{display:grid;gap:14px}
+.express-card-grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.express-card{border:1px solid var(--line);border-radius:18px;background:#fff;padding:22px;min-height:260px}
+.express-card-num{font-size:10px;font-weight:800;letter-spacing:.15em;color:var(--blue)}
+.express-card h3,.express-choice h3,.express-step h3,.express-process-grid h3,.express-mini h3{font-size:18px;color:var(--navy);margin:12px 0 8px}
+.express-card p,.express-choice p,.express-step p,.express-process-grid p,.express-mini p{font-size:13px;line-height:1.65;color:var(--slate-700)}
+.express-center-action{display:flex;justify-content:center;margin-top:24px}
+.express-choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.express-choice{border:1px solid rgba(255,255,255,.14);border-radius:18px;padding:24px;background:rgba(255,255,255,.05)}
+.express-choice>span{display:inline-flex;width:34px;height:34px;border-radius:999px;align-items:center;justify-content:center;background:#fff;color:var(--blue);font-weight:800;font-size:11px}
+.express-choice h3{color:#fff;font-size:22px}
+.express-choice p{color:#c9d9ef}
+.express-deep-note{display:block;margin-top:16px;color:#9fb8dc}
+.express-steps{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.express-step{display:grid;grid-template-columns:48px 1fr;gap:14px;border:1px solid var(--line);border-radius:14px;padding:16px;background:#fff}
+.express-step>span{font-family:"Bebas Neue",Inter,sans-serif;font-size:34px;color:#b2c5e0;line-height:1}
+.express-step h3{margin-top:0}
+.express-alert{margin-top:18px;border-radius:14px;background:#fff7e8;border:1px solid #f2d5a3;padding:16px}
+.express-alert strong{color:#7b4b00}
+.express-alert p{margin:4px 0 0;color:#7a5b2b}
+.express-mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+.express-mini{padding:20px}
+.express-table-wrap{overflow:auto;border:1px solid var(--line);border-radius:16px;background:#fff}
+.express-table{width:100%;border-collapse:collapse;min-width:760px}
+.express-table th,.express-table td{padding:15px 16px;text-align:left;border-bottom:1px solid var(--line);font-size:13px}
+.express-table th{background:#f5f8fc;text-transform:uppercase;letter-spacing:.08em;font-size:10px;color:var(--slate-500)}
+.express-table td:last-child{color:var(--blue)}
+.express-note-stack{margin:16px 0 20px}
+.express-process-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.express-process-grid article{border-top:2px solid var(--blue);padding:16px 4px 0}
+.express-process-grid article>span{font-size:10px;font-weight:800;color:var(--blue);letter-spacing:.14em}
+.express-contact{margin-top:24px;padding:20px;display:grid;grid-template-columns:1fr 1fr auto;gap:14px;align-items:end}
+.express-contact small{display:block;text-transform:uppercase;letter-spacing:.1em;font-size:9px;color:var(--slate-500);font-weight:800}
+.express-contact strong{display:block;margin-top:5px;color:var(--navy);font-size:14px}
+.express-faq{display:grid;grid-template-columns:1fr 1fr;gap:0 28px}
+.express-faq-item{border-bottom:1px solid var(--line);padding:14px 0}
+.express-faq-item summary{cursor:pointer;font-weight:800;color:var(--navy);font-size:14px}
+.express-faq-item p{color:var(--slate-700);font-size:13px;line-height:1.6}
+.express-closing{padding:76px 0;background:linear-gradient(135deg,#eef4fb,#fff);text-align:center}
+.express-closing .express-kicker{margin-bottom:4px}
+.express-closing h2{margin-left:auto;margin-right:auto}
+.express-closing>div>p{max-width:760px;margin:8px auto;color:var(--slate-700);line-height:1.65}
+.express-closing>div>strong{display:block;margin:26px auto 18px;font-size:22px;line-height:1.5;color:var(--navy)}
+.express-closing .express-actions{justify-content:center}
+.express-closing small{display:block;max-width:760px;margin:16px auto 0;color:var(--slate-500)}
+
+@media(max-width:900px){
+ .express-hero-grid,.express-split,.express-cost-grid{grid-template-columns:1fr}
+ .express-card-grid.three{grid-template-columns:1fr}
+ .express-process-grid{grid-template-columns:1fr 1fr}
+ .express-contact{grid-template-columns:1fr 1fr}
+ .express-contact .btn{grid-column:1/-1}
+}
+@media(max-width:640px){
+ .express-hero{padding:34px 0 28px}
+ .express-hero h1{font-size:48px}
+ .express-section{padding:48px 0}
+ .express-actions{display:grid}
+ .express-actions .btn{width:100%}
+ .express-choice-grid,.express-steps,.express-mini-grid,.express-faq,.express-process-grid,.express-contact{grid-template-columns:1fr}
+ .express-card,.express-choice{min-height:auto}
+ .express-hero-panel{padding:24px}
+ .express-hero-panel>strong{font-size:68px}
+ .express-step{grid-template-columns:40px 1fr}
+ .express-table{min-width:680px}
+ .express-closing{padding:56px 0}
+}

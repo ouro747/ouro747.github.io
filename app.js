@@ -281,6 +281,176 @@ function expressDeliveryPage(){
  </main>`);
 }
 
+function transparencyPage(){
+ const manufacturerItems=[
+  ['Laboratório','Nome e identificação da empresa fabricante.'],
+  ['Origem','País de fabricação separado do país de distribuição.'],
+  ['Canais oficiais','Site e canais oficiais de atendimento.'],
+  ['Documentação','Referências que sustentam as informações publicadas.'],
+  ['Verificação','Recursos de autenticidade oferecidos pelo fabricante.']
+ ];
+ const traceItems=[
+  ['01','Origem do fornecimento','Documentação de aquisição e origem identificada.'],
+  ['02','Produto recebido','Nome, apresentação e fabricante conferidos.'],
+  ['03','Lote e validade','Número do lote e prazo de validade registrados.'],
+  ['04','Recebimento','Data de recebimento e conferência registrada.'],
+  ['05','Pedido expedido','Vinculação do lote ao pedido enviado ao cliente.']
+ ];
+ const documentChecks=[
+  ['Produto e apresentação','Identificação exata do item ao qual o documento se refere.'],
+  ['Lote ou amostra','Correspondência entre o material analisado e o lote informado.'],
+  ['Emissor','Laboratório ou entidade responsável pelo documento.'],
+  ['Data e identificação','Data, código ou referência que permita localizar o arquivo.'],
+  ['Ensaios e resultados','O que foi efetivamente analisado e quais resultados constam no documento.']
+ ];
+ const validationSteps=[
+  ['1','Identifique','Confira fabricante, lote e validade na embalagem.'],
+  ['2','Acesse','Use o canal oficial indicado para aquela marca.'],
+  ['3','Consulte','Verifique o código de autenticidade, quando esse recurso existir.'],
+  ['4','Compare','Se houver divergência, encaminhe as informações ao nosso suporte.']
+ ];
+ const docStatuses=[
+  ['Disponível para consulta','O arquivo está acessível, com indicação de origem e identificação do produto ou lote correspondente.','available'],
+  ['Em conferência','O documento foi recebido, mas sua origem, correspondência ou conteúdo ainda está sendo verificado.','review'],
+  ['Não disponível','O documento ainda não está disponível para apresentação ao cliente.','unavailable']
+ ];
+ return shell(`<main class="transparency-page">
+  <section class="transparency-hero">
+   <div class="container transparency-hero-grid">
+    <div class="transparency-hero-copy">
+     <span class="transparency-eyebrow">GLOBAL PHARMA · TRANSPARÊNCIA</span>
+     <h1>Confiança começa com informação que você pode conferir.</h1>
+     <p class="transparency-lead">Quem compra medicamento importado tem uma preocupação a mais: saber se o que chegou é exatamente o que saiu do laboratório — mesma apresentação, mesmo lote, mesma origem.</p>
+     <p>Na Global Pharma, nosso compromisso é trabalhar com laboratórios de origem identificada, manter registros dos lotes comercializados e facilitar o acesso às informações oficiais dos fabricantes.</p>
+     <p>Você pode conhecer os critérios de seleção das marcas, consultar a documentação disponível e solicitar esclarecimentos sobre o seu produto.</p>
+     <div class="transparency-pills"><span>Procedência documentada</span><span>Fabricantes identificados</span><span>Informações por lote</span></div>
+     <div class="transparency-actions"><a class="btn btn-primary btn-lg" href="#documentacao">CONSULTAR MARCAS E DOCUMENTAÇÃO</a><a class="btn btn-secondary btn-lg" href="/contato" data-route>ESCLARECER UMA DÚVIDA</a></div>
+    </div>
+    <aside class="transparency-hero-panel">
+     <span class="transparency-panel-kicker">O que você consegue conferir</span>
+     <div class="transparency-check-list">
+      <span>✓ Quem fabrica</span>
+      <span>✓ De onde vem</span>
+      <span>✓ Qual lote foi informado</span>
+      <span>✓ Quais documentos estão disponíveis</span>
+      <span>✓ Qual é a fonte de cada informação</span>
+     </div>
+    </aside>
+   </div>
+  </section>
+
+  <section class="transparency-section">
+   <div class="container">
+    <div class="transparency-heading"><span class="transparency-index">01</span><span class="transparency-kicker">Marcas e fabricantes</span><h2>Você merece saber quem está por trás do medicamento.</h2><p>Nosso critério é trabalhar com laboratórios cuja identidade e procedência possam ser documentadas, com canais oficiais que permitam solicitar esclarecimentos sobre seus produtos.</p><p>Essa conferência considera a identificação do fabricante, a origem do fornecimento, a documentação apresentada e as possibilidades de confirmação diretamente com a marca.</p></div>
+    <div class="transparency-feature-grid">${manufacturerItems.map(([title,text],i)=>`<article class="transparency-feature"><span>${String(i+1).padStart(2,'0')}</span><h3>${esc(title)}</h3><p>${esc(text)}</p></article>`).join('')}</div>
+    <div class="transparency-callout"><strong>Fabricante, distribuidor e importador não são tratados como a mesma função.</strong><p>Quando forem diferentes, essas funções serão identificadas separadamente.</p></div>
+    <p class="transparency-strong-note">Qualquer vínculo de representação oficial ou distribuição autorizada será informado somente quando houver comprovação.</p>
+   </div>
+  </section>
+
+  <section class="transparency-section transparency-soft">
+   <div class="container">
+    <div class="transparency-heading"><span class="transparency-index">02</span><span class="transparency-kicker">Procedência e rastreabilidade</span><h2>Cada lote precisa ter uma origem identificável.</h2><p>Nosso compromisso com a rastreabilidade é manter a ligação entre o fornecedor, o produto recebido, o lote identificado na embalagem e o pedido enviado ao cliente.</p><p>O controle por lote permite localizar informações, esclarecer divergências e apoiar a investigação de uma eventual ocorrência.</p></div>
+    <div class="transparency-trace">${traceItems.map(([n,title,text])=>`<article><span class="trace-number">${n}</span><div><h3>${esc(title)}</h3><p>${esc(text)}</p></div></article>`).join('')}</div>
+    <div class="transparency-callout blue"><strong>Rastreabilidade tem alcance definido.</strong><p>A expressão “rastreabilidade completa” só será utilizada quando todas as etapas anunciadas estiverem documentadas.</p></div>
+   </div>
+  </section>
+
+  <section class="transparency-section" id="documentacao">
+   <div class="container">
+    <div class="transparency-heading"><span class="transparency-index">03</span><span class="transparency-kicker">Laudos e documentação</span><h2>O documento precisa corresponder ao produto e ao lote.</h2><p>Nosso compromisso é disponibilizar a documentação técnica correspondente aos produtos e lotes comercializados, identificando a origem de cada arquivo.</p></div>
+    <div class="transparency-doc-layout">
+     <div class="transparency-doc-card">
+      <span class="transparency-doc-icon">DOC</span>
+      <h3>O que conferimos em um laudo ou certificado</h3>
+      <div class="transparency-doc-checks">${documentChecks.map(([title,text])=>`<div><strong>${esc(title)}</strong><span>${esc(text)}</span></div>`).join('')}</div>
+     </div>
+     <div class="transparency-principles">
+      <article><strong>Correspondência de lote</strong><p>Um documento referente a determinado lote não será apresentado como comprovação de outro.</p></article>
+      <article><strong>Origem do documento</strong><p>Distinguimos documentos emitidos pelo fabricante de análises realizadas por laboratórios independentes.</p></article>
+      <article><strong>Limite da evidência</strong><p>Um laudo informa os resultados dos ensaios descritos naquele documento. Não representa, isoladamente, comprovação de todas as características do produto.</p></article>
+     </div>
+    </div>
+    <div class="transparency-center-action"><a class="btn btn-primary" href="/produtos" data-route>CONSULTAR DOCUMENTAÇÃO DISPONÍVEL</a></div>
+   </div>
+  </section>
+
+  <section class="transparency-section transparency-deep">
+   <div class="container">
+    <div class="transparency-heading light"><span class="transparency-index">04</span><span class="transparency-kicker">Validação com o fabricante</span><h2>A informação pode ser conferida na fonte.</h2><p>Disponibilizamos os canais oficiais identificados dos fabricantes para que você possa solicitar esclarecimentos sobre embalagens, lotes e recursos de autenticidade.</p><p>Quando a marca oferecer um sistema próprio de verificação, orientamos como acessá-lo e quais informações são necessárias para a consulta.</p></div>
+    <div class="transparency-validation">${validationSteps.map(([n,title,text])=>`<article><span>${n}</span><h3>${esc(title)}</h3><p>${esc(text)}</p></article>`).join('')}</div>
+    <div class="transparency-deep-callout"><strong>Nossa equipe pode auxiliar no encaminhamento.</strong><p>A confirmação será atribuída ao fabricante apenas quando houver uma resposta ou resultado oficial correspondente.</p></div>
+    <p class="transparency-deep-note">Um QR Code que apenas abre um site não equivale, por si só, à autenticação da unidade recebida.</p>
+    <a class="btn btn-secondary" href="/contato" data-route>CONSULTAR CANAIS DOS FABRICANTES</a>
+   </div>
+  </section>
+
+  <section class="transparency-section">
+   <div class="container transparency-integrity-grid">
+    <div class="transparency-heading"><span class="transparency-index">05</span><span class="transparency-kicker">Integridade e conservação</span><h2>Transparência também inclui os cuidados com o produto.</h2><p>Medicamento é sensível a temperatura e umidade. A conferência deve considerar a integridade da embalagem, os lacres, a legibilidade das informações e a correspondência entre produto, lote e validade.</p><p>As condições de armazenamento e transporte seguem as orientações específicas do fabricante. Quando houver necessidade de controle de temperatura, essa exigência é informada no anúncio do produto.</p></div>
+    <aside class="transparency-integrity-card">
+     <span>CONFERIR NO RECEBIMENTO</span>
+     <div><strong>01</strong><p>Embalagem e lacres</p></div>
+     <div><strong>02</strong><p>Lote e validade</p></div>
+     <div><strong>03</strong><p>Legibilidade das informações</p></div>
+     <div><strong>04</strong><p>Condições de conservação</p></div>
+    </aside>
+   </div>
+   <div class="container"><div class="transparency-alert"><strong>Importante:</strong><p>Alegações de transporte refrigerado ou temperatura monitorada são acompanhadas dos registros que as sustentam.</p><p>Caso identifique embalagem violada, informação divergente ou suspeita sobre a conservação, entre em contato antes de utilizar o produto.</p></div></div>
+  </section>
+
+  <section class="transparency-section transparency-soft">
+   <div class="container">
+    <div class="transparency-heading"><span class="transparency-index">06</span><span class="transparency-kicker">Informações regulatórias</span><h2>Origem, autenticidade e regularização são informações distintas.</h2><p>Apresentamos os dados regulatórios disponíveis identificando o produto, a autoridade responsável, o país de referência e a fonte consultada.</p></div>
+    <div class="transparency-reg-grid">
+     <article><span>ORIGEM</span><h3>De onde vem</h3><p>Identificação do fabricante, país e cadeia de fornecimento disponível.</p></article>
+     <article><span>AUTENTICIDADE</span><h3>O que pode ser conferido</h3><p>Códigos, canais e respostas oficiais do fabricante, quando existentes.</p></article>
+     <article><span>REGULARIZAÇÃO</span><h3>Qual autorização se aplica</h3><p>Registros e autorizações descritos conforme o país e o alcance de cada fonte.</p></article>
+    </div>
+    <div class="transparency-callout warning"><strong>Um registro de outro país não é apresentado como aprovação pela Anvisa.</strong><p>A existência de laudo, código de verificação ou confirmação do fabricante não é utilizada como substituto da regularização exigida para o produto e a operação.</p></div>
+    <p class="transparency-strong-note">Você deve conseguir identificar o que foi consultado, onde foi consultado e quando a informação foi atualizada.</p>
+   </div>
+  </section>
+
+  <section class="transparency-section" id="status-documental">
+   <div class="container">
+    <div class="transparency-heading"><span class="transparency-index">07</span><span class="transparency-kicker">Documentos disponíveis e pendências</span><h2>A ausência de informação também precisa ficar clara.</h2><p>Cada documento tem sua situação identificada:</p></div>
+    <div class="transparency-status-grid">${docStatuses.map(([title,text,status])=>`<article class="transparency-status ${status}"><span class="status-dot"></span><h3>${esc(title)}</h3><p>${esc(text)}</p></article>`).join('')}</div>
+    <div class="transparency-principles horizontal">
+     <article><strong>Publicação não é certificação</strong><p>A publicação de um arquivo não significa certificação independente pela Global Pharma.</p></article>
+     <article><strong>Limitações são informadas</strong><p>Quando uma informação não estiver comprovada, essa limitação é apresentada de forma clara.</p></article>
+     <article><strong>Pendência relevante precisa ser resolvida</strong><p>Uma pendência documental relevante precisa ser esclarecida antes de o produto ser tratado como verificado.</p></article>
+    </div>
+   </div>
+  </section>
+
+  <section class="transparency-section transparency-support">
+   <div class="container transparency-support-grid">
+    <div class="transparency-heading light"><span class="transparency-index">08</span><span class="transparency-kicker">Atendimento e responsabilidade</span><h2>Sua dúvida merece uma resposta verificável.</h2><p>Nosso atendimento recebe solicitações sobre procedência, documentação, identificação de lotes, embalagens e informações oficiais dos fabricantes.</p><p>Também disponibilizamos um canal para comunicar divergências, suspeitas de falsificação, problemas de qualidade e possíveis eventos adversos, com encaminhamento ao responsável adequado.</p></div>
+    <div class="transparency-support-card">
+     <h3>Para agilizar a conferência</h3>
+     <div><span>01</span><p>Informe o número do pedido.</p></div>
+     <div><span>02</span><p>Informe o nome do produto.</p></div>
+     <div><span>03</span><p>Informe o lote.</p></div>
+     <div><span>04</span><p>Envie fotos da embalagem, quando necessário.</p></div>
+     <a class="btn btn-primary" href="/contato" data-route>SOLICITAR INFORMAÇÕES SOBRE MEU PRODUTO</a>
+    </div>
+   </div>
+   <div class="container"><p class="transparency-medical-note">Informações técnicas sobre medicamentos devem respeitar a documentação oficial. Nosso atendimento comercial não substitui a orientação de médico ou farmacêutico.</p></div>
+  </section>
+
+  <section class="transparency-closing">
+   <div class="container">
+    <span class="transparency-kicker">GLOBAL PHARMA</span>
+    <h2>Respeito pela sua confiança.<br>Responsabilidade com cada informação.</h2>
+    <p>Nosso compromisso com a transparência se traduz em procedência documentada, informações acessíveis e clareza sobre o que foi confirmado e o que ainda precisa de esclarecimento.</p>
+    <strong>Conheça a marca. Confira o lote. Consulte a documentação.</strong>
+    <div class="transparency-actions"><a class="btn btn-primary btn-lg" href="/produtos" data-route>CONSULTAR INFORMAÇÕES DO PRODUTO</a><a class="btn btn-secondary btn-lg" href="/contato" data-route>FALAR COM A GLOBAL PHARMA</a></div>
+   </div>
+  </section>
+ </main>`);
+}
+
 function genericPage(title,text){return shell(`<main><section class="page-hero"><div class="container"><span class="badge">Global Pharma</span><h1>${esc(title)}</h1><p>${esc(text)}</p></div></section><section class="section"><div class="container"><div class="card info-block"><h2>${esc(title)}</h2><p class="pdp-sub">${esc(text)}</p></div></div></section></main>`)}
 
 function checkout(){const items=state.cart.map(i=>({i,p:state.products.find(p=>p.slug===i.slug)})).filter(x=>x.p);const total=items.reduce((a,{i,p})=>a+(i.shipping==='express'&&p.expressAvailable?p.pricing.express:p.pricing.basic)*i.qty,0);return shell(`<main><section class="page-hero"><div class="container"><span class="badge">Checkout</span><h1>Finalizar pedido</h1><p>Estrutura visual pronta. A conexão com PYX Gate será plugada no adapter de pagamento, sem expor segredo no navegador.</p></div></section><section class="section" style="padding-top:20px"><div class="container checkout-grid"><form id="checkoutForm" class="card info-block"><h2>Dados do cliente</h2><div class="form-grid"><div class="field"><label>Nome completo</label><input class="input" name="name" required></div><div class="field"><label>CPF</label><input class="input" name="document" required></div><div class="field"><label>E-mail</label><input class="input" type="email" name="email" required></div><div class="field"><label>Telefone</label><input class="input" name="phone" required></div><div class="field"><label>CEP</label><input class="input" name="postal" required></div><div class="field"><label>Cidade</label><input class="input" name="city" required></div><div class="field"><label>Estado</label><input class="input" name="state" required></div><div class="field full"><label>Endereço</label><input class="input" name="address" required></div></div><button class="btn btn-primary" style="width:100%;margin-top:16px">GERAR PAGAMENTO (MODO DEMO)</button></form><aside class="card summary"><h2>Resumo</h2>${items.length?items.map(({i,p})=>`<div class="summary-line"><span>${esc(p.displayName)} × ${i.qty}</span><strong>${money((i.shipping==='express'?p.pricing.express:p.pricing.basic)*i.qty)}</strong></div>`).join(''):`<div class="empty">Seu carrinho está vazio.</div>`}<div class="summary-line summary-total"><span>Total</span><span>${money(total)}</span></div></aside></div></section></main>`)}
@@ -317,7 +487,7 @@ function getByPath(obj,path){return path.split('.').reduce((a,k)=>a?.[k],obj)}
 function setByPath(obj,path,value){const parts=path.split('.');let cur=obj;parts.forEach((k,i)=>{const last=i===parts.length-1;if(last){cur[k]=value;return}const next=parts[i+1];if(cur[k]==null)cur[k]=/^\d+$/.test(next)?[]:{};cur=cur[k]})}
 function collectEditor(){const p=structuredClone(state.adminEditing);const form=document.querySelector('#productEditorForm');if(!form)return p;form.querySelectorAll('[name]').forEach(el=>{const name=el.name;if(name.startsWith('visibility.')){const k=name.split('.')[1];p.sectionVisibility=p.sectionVisibility||{};p.sectionVisibility[k]=el.checked;return}let val=el.value;if(el.dataset.json==='true'){try{val=val.trim()?JSON.parse(val):[]}catch{toast('Há um campo JSON inválido.');throw new Error('JSON inválido em '+name)}}if(el.type==='number')val=val===''?null:Number(val);if(['isActive','expressAvailable','requiresRefrigeration','prescriptionRequired'].includes(name))val=val==='true';setByPath(p,name,val)});p.slug=slugify(p.slug||p.name);p.displayName=p.displayName||p.name;return normalizeProduct(p)}
 
-function render(){const path=location.pathname;let html;if(path==='/')html=home();else if(path==='/produtos')html=productsPage();else if(path.startsWith('/produto/'))html=pdp(decodeURIComponent(path.split('/')[2]||''));else if(path==='/checkout')html=checkout();else if(path==='/admin')html=(state.isAdmin&&!state.mustChangePassword)?adminOverview():adminAccess();else if(path==='/admin/produtos')html=(state.isAdmin&&!state.mustChangePassword)?adminProducts():adminAccess();else if(path==='/entrega')html=expressDeliveryPage();else if(path==='/transparencia')html=genericPage('Transparência','Documentação, procedência e informações oficiais aparecem somente quando cadastradas.');else if(path==='/rastreamento')html=genericPage('Rastreamento','Área preparada para consulta de pedidos e acompanhamento logístico.');else if(path==='/contato')html=genericPage('Contato','Canal de atendimento da Global Pharma.');else if(path==='/ajuda')html=genericPage('Ajuda','Central de suporte e dúvidas frequentes.');else if(path==='/termos')html=genericPage('Termos de uso','Conteúdo jurídico será conectado à versão definitiva.');else if(path==='/privacidade')html=genericPage('Privacidade','Política de privacidade será conectada à versão definitiva.');else if(path==='/trocas-e-devolucoes')html=genericPage('Trocas e devoluções','Política operacional será conectada à versão definitiva.');else html=genericPage('Página não encontrada','O endereço solicitado não existe.');app.innerHTML=html;bind();}
+function render(){const path=location.pathname;let html;if(path==='/')html=home();else if(path==='/produtos')html=productsPage();else if(path.startsWith('/produto/'))html=pdp(decodeURIComponent(path.split('/')[2]||''));else if(path==='/checkout')html=checkout();else if(path==='/admin')html=(state.isAdmin&&!state.mustChangePassword)?adminOverview():adminAccess();else if(path==='/admin/produtos')html=(state.isAdmin&&!state.mustChangePassword)?adminProducts():adminAccess();else if(path==='/entrega')html=expressDeliveryPage();else if(path==='/transparencia')html=transparencyPage();else if(path==='/rastreamento')html=genericPage('Rastreamento','Área preparada para consulta de pedidos e acompanhamento logístico.');else if(path==='/contato')html=genericPage('Contato','Canal de atendimento da Global Pharma.');else if(path==='/ajuda')html=genericPage('Ajuda','Central de suporte e dúvidas frequentes.');else if(path==='/termos')html=genericPage('Termos de uso','Conteúdo jurídico será conectado à versão definitiva.');else if(path==='/privacidade')html=genericPage('Privacidade','Política de privacidade será conectada à versão definitiva.');else if(path==='/trocas-e-devolucoes')html=genericPage('Trocas e devoluções','Política operacional será conectada à versão definitiva.');else html=genericPage('Página não encontrada','O endereço solicitado não existe.');app.innerHTML=html;bind();}
 
 function bind(){
  document.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>addToCart(b.dataset.add));

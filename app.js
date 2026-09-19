@@ -132,13 +132,13 @@ function expressDeliveryPage(){
   ['Guarde o arquivo original.','Se precisar de atendimento, encaminhe o vídeo sem cortes ou edições pelo nosso canal oficial.']
  ];
  const deadlines=[
-  ['Postagem após a confirmação do pagamento','[PREENCHER PRAZO REAL]'],
-  ['Disponibilização do rastreamento','[PREENCHER PRAZO REAL]'],
-  ['Entrega estimada','[INFORMAR ONDE O CLIENTE CONSULTA]'],
-  ['Primeira resposta a uma solicitação','[PREENCHER PRAZO REAL]'],
-  ['Conferência da ocorrência','[PREENCHER PRAZO REAL E MARCO INICIAL]'],
-  ['Postagem do reenvio após a confirmação e escolha do cliente','[PREENCHER PRAZO REAL]'],
-  ['Solicitação ou execução do reembolso após a confirmação','[PREENCHER PRAZO REAL POR MEIO DE PAGAMENTO]']
+  ['Postagem após a confirmação do pagamento','Até 1 dia útil após a confirmação do pagamento, para produtos disponíveis em estoque.'],
+  ['Disponibilização do rastreamento','Envio do código ou link de acompanhamento em até 2 dias úteis após a postagem. As movimentações são atualizadas pela transportadora.'],
+  ['Entrega estimada','Prazo informado antes da conclusão da compra, conforme o CEP de destino e a modalidade de frete escolhida. Após a postagem, acompanhe as atualizações pelo link de rastreamento.'],
+  ['Primeira resposta a uma solicitação','Até 1 dia útil após o recebimento da mensagem em nosso canal oficial.'],
+  ['Conferência da ocorrência','Análise inicial em até 2 dias úteis, contados do recebimento do número do pedido e dos registros disponíveis. Quando houver necessidade de apuração pela transportadora, informaremos o andamento e a previsão de conclusão.'],
+  ['Postagem do reenvio após a confirmação e escolha do cliente','Até 1 dia útil após a confirmação da cobertura e a escolha pelo reenvio, havendo disponibilidade do produto e possibilidade legal de envio.'],
+  ['Solicitação ou execução do reembolso após a confirmação','Pix: devolução em até 1 dia útil. Boleto: transferência em até 2 dias úteis após o recebimento dos dados bancários do titular da compra. Cartão: solicitação de estorno em até 1 dia útil, com crédito conforme o processamento da administradora. Os prazos começam após a confirmação da cobertura e a escolha pelo reembolso.']
  ];
  const faqs=[
   ['Preciso contratar a proteção separadamente?','Não. Ela já está incluída em todos os pedidos, sem cobrança adicional.'],
@@ -238,6 +238,10 @@ function expressDeliveryPage(){
    <div class="container">
     <div class="express-heading"><span class="express-index">06</span><span class="express-kicker">Prazos</span><h2>Você precisa saber quando esperar.<br>E quando receber uma resposta.</h2><p>O prazo de entrega considera o destino e a modalidade de transporte disponível para o seu pedido. Para facilitar o acompanhamento, informamos separadamente:</p></div>
     <div class="express-table-wrap"><table class="express-table"><thead><tr><th>Etapa</th><th>Prazo</th></tr></thead><tbody>${deadlines.map(([stage,time])=>`<tr><td>${esc(stage)}</td><td><strong>${esc(time)}</strong></td></tr>`).join('')}</tbody></table></div>
+    <div class="express-mini-grid express-deadline-notes">
+     <article class="card express-mini"><h3>Como contamos os prazos</h3><p>Os prazos internos da loja são contados em dias úteis, de segunda a sexta-feira, exceto feriados, a partir do primeiro dia útil seguinte ao evento indicado.</p><p>O prazo de preparação e postagem é separado do prazo de transporte. Antes do pagamento, informamos a previsão total de recebimento considerando essas duas etapas.</p></article>
+     <article class="card express-mini"><h3>Se precisar acionar a proteção</h3><p>Você recebe uma primeira resposta dentro do prazo de atendimento. A análise inicial pode exigir informações adicionais; ela não significa, necessariamente, que a apuração da transportadora estará concluída nesse período.</p></article>
+    </div>
     <div class="express-note-stack"><p>Em pagamentos por cartão, o prazo para o crédito aparecer na fatura também depende do processamento da administradora.</p><p>Se o prazo informado para sua entrega terminar e o pedido não chegar, entre em contato para iniciarmos a verificação.</p></div>
     <a class="btn btn-primary" href="/rastreamento" data-route>CONSULTAR MEU PEDIDO</a>
    </div>

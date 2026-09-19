@@ -2,6 +2,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = 'https://icqdmxzcnctwwhfcjqtb.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_ZgGNC48-dnOYdON3FY2rXQ_Tzxz2b8c';
+const ADMIN_EMAIL = 'vendettavenon@gmail.com';
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: {
@@ -37,39 +38,50 @@ export async function getAuthState() {
   const { data: { session }, error } = await supabase.auth.getSession();
   if (error) throw error;
   const user = session?.user || null;
-  if (!user) return { user: null, isAdmin: false };
+  if (!user) return { user: null, isAdmin: false, mustChangePassword: false };
+  if ((user.email || '').toLowerCase() !== ADMIN_EMAIL) {
+    await supabase.auth.signOut();
+    return { user: null, isAdmin: false, mustChangePassword: false };
+  }
   const { data, error: adminError } = await supabase
     .from('admin_users')
-    .select('user_id')
+    .select('user_id,must_change_password')
     .eq('user_id', user.id)
     .maybeSingle();
   if (adminError) throw adminError;
-  return { user, isAdmin: Boolean(data) };
+  return {
+    user,
+    isAdmin: Boolean(data),
+    mustChangePassword: Boolean(data?.must_change_password)
+  };
 }
 
 export function onAuthChange(callback) {
   return supabase.auth.onAuthStateChange(async (_event, session) => {
     let isAdmin = false;
-    if (session?.user) {
+    let mustChangePassword = false;
+    let user = session?.user || null;
+    if (user && (user.email || '').toLowerCase() === ADMIN_EMAIL) {
       const { data } = await supabase
         .from('admin_users')
-        .select('user_id')
-        .eq('user_id', session.user.id)
+        .select('user_id,must_change_password')
+        .eq('user_id', user.id)
         .maybeSingle();
       isAdmin = Boolean(data);
+      mustChangePassword = Boolean(data?.must_change_password);
+    } else if (user) {
+      await supabase.auth.signOut();
+      user = null;
     }
-    callback({ user: session?.user || null, isAdmin });
+    callback({ user, isAdmin, mustChangePassword });
   });
 }
 
-export async function signInAdmin(email, password) {
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) throw error;
-  return data;
-}
-
-export async function signUpAdmin(email, password) {
-  const { data, error } = await supabase.auth.signUp({ email, password });
+export async function signInAdmin(password) {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: ADMIN_EMAIL,
+    password
+  });
   if (error) throw error;
   return data;
 }
@@ -79,10 +91,19 @@ export async function signOutAdmin() {
   if (error) throw error;
 }
 
-export async function claimInitialAdmin(code) {
-  const { data, error } = await supabase.rpc('claim_initial_admin', { p_code: code });
+export async function updateAdminPassword(newPassword) {
+  const { data, error } = await supabase.auth.updateUser({ password: newPassword });
   if (error) throw error;
-  return Boolean(data);
+  const user = data?.user;
+  if (!user || (user.email || '').toLowerCase() !== ADMIN_EMAIL) {
+    throw new Error('Conta administrativa inválida.');
+  }
+  const { error: flagError } = await supabase
+    .from('admin_users')
+    .update({ must_change_password: false })
+    .eq('user_id', user.id);
+  if (flagError) throw flagError;
+  return user;
 }
 
 export async function loadCloudProducts(includeArchived = false) {

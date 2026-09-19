@@ -28,6 +28,27 @@ jobs:
         run: |
           node --check app.js
           node --check data.js
+          node --check supabase.js
+
+      - name: Validate static frontend
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if grep -Fq '\\n' index.html || grep -Fq '\\n' 404.html; then
+            echo "Literal \\n sequence found in HTML."
+            exit 1
+          fi
+
+          refs=$(grep -Eho '/assets/[A-Za-z0-9._/-]+' app.js styles.css | sort -u || true)
+          while IFS= read -r ref; do
+            [ -z "$ref" ] && continue
+            file=".${ref}"
+            if [ ! -f "$file" ]; then
+              echo "Missing referenced asset: $ref"
+              exit 1
+            fi
+          done <<< "$refs"
 
       - name: Configure Pages
         uses: actions/configure-pages@v5

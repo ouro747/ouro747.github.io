@@ -670,7 +670,118 @@ function getByPath(obj,path){return path.split('.').reduce((a,k)=>a?.[k],obj)}
 function setByPath(obj,path,value){const parts=path.split('.');let cur=obj;parts.forEach((k,i)=>{const last=i===parts.length-1;if(last){cur[k]=value;return}const next=parts[i+1];if(cur[k]==null)cur[k]=/^\d+$/.test(next)?[]:{};cur=cur[k]})}
 function collectEditor(){const p=structuredClone(state.adminEditing);const form=document.querySelector('#productEditorForm');if(!form)return p;form.querySelectorAll('[name]').forEach(el=>{const name=el.name;if(name.startsWith('visibility.')){const k=name.split('.')[1];p.sectionVisibility=p.sectionVisibility||{};p.sectionVisibility[k]=el.checked;return}let val=el.value;if(el.dataset.json==='true'){try{val=val.trim()?JSON.parse(val):[]}catch{toast('Há um campo JSON inválido.');throw new Error('JSON inválido em '+name)}}if(el.type==='number')val=val===''?null:Number(val);if(['isActive','expressAvailable','requiresRefrigeration','prescriptionRequired'].includes(name))val=val==='true';setByPath(p,name,val)});p.slug=slugify(p.slug||p.name);p.displayName=p.displayName||p.name;return normalizeProduct(p)}
 
-function render(){const path=location.pathname;let html;if(path==='/')html=home();else if(path==='/produtos')html=productsPage();else if(path.startsWith('/produto/'))html=pdp(decodeURIComponent(path.split('/')[2]||''));else if(path==='/checkout')html=checkout();else if(path==='/admin')html=(state.isAdmin&&!state.mustChangePassword)?adminOverview():adminAccess();else if(path==='/admin/produtos')html=(state.isAdmin&&!state.mustChangePassword)?adminProducts():adminAccess();else if(path==='/admin/order-bumps')html=(state.isAdmin&&!state.mustChangePassword)?adminOrderBumps():adminAccess();else if(path==='/admin/order-bumps/metricas')html=(state.isAdmin&&!state.mustChangePassword)?orderBumpMetrics():adminAccess();else if(path==='/entrega')html=expressDeliveryPage();else if(path==='/transparencia')html=transparencyPage();else if(path==='/rastreamento')html=genericPage('Rastreamento','Área preparada para consulta de pedidos e acompanhamento logístico.');else if(path==='/contato')html=genericPage('Contato','Canal de atendimento da Global Pharma.');else if(path==='/ajuda')html=genericPage('Ajuda','Central de suporte e dúvidas frequentes.');else if(path==='/termos')html=genericPage('Termos de uso','Conteúdo jurídico será conectado à versão definitiva.');else if(path==='/privacidade')html=genericPage('Privacidade','Política de privacidade será conectada à versão definitiva.');else if(path==='/trocas-e-devolucoes')html=genericPage('Trocas e devoluções','Política operacional será conectada à versão definitiva.');else html=genericPage('Página não encontrada','O endereço solicitado não existe.');app.innerHTML=html;bind();}
+function setSeoMeta(selector,attrName,attrValue,content){
+ let el=document.head.querySelector(selector);
+ if(!el){el=document.createElement('meta');el.setAttribute(attrName,attrValue);document.head.appendChild(el)}
+ el.setAttribute('content',content||'');
+}
+function setCanonical(url){
+ let link=document.head.querySelector('link[rel="canonical"]');
+ if(!link){link=document.createElement('link');link.rel='canonical';document.head.appendChild(link)}
+ link.href=url;
+}
+function setSeoJsonLd(data){
+ let script=document.head.querySelector('#gp-seo-jsonld');
+ if(!data){script?.remove();return}
+ if(!script){script=document.createElement('script');script.id='gp-seo-jsonld';script.type='application/ld+json';document.head.appendChild(script)}
+ script.textContent=JSON.stringify(data);
+}
+function updateSeo(path){
+ const origin=location.origin;
+ let title='Global Pharma | Saúde, Qualidade e Procedência';
+ let description='Informações sobre produtos, procedência, documentação, conservação e atendimento da Global Pharma.';
+ let canonical=origin+(path==='/'?'/':path);
+ let robots='index,follow,max-image-preview:large';
+ let ogType='website';
+ let image=origin+'/assets/global-pharma-logo-transparent.png';
+ let jsonLd=null;
+
+ if(path.startsWith('/produto/')){
+  const slug=decodeURIComponent(path.split('/')[2]||'');
+  const p=state.products.find(x=>x.slug===slug);
+  if(p){
+   title=p.seoTitle||`${p.displayName||p.name} | Global Pharma`;
+   description=p.seoDescription||p.shortDescription||`Informações técnicas sobre ${p.displayName||p.name}.`;
+   canonical=origin+'/produto/'+encodeURIComponent(p.slug);
+   robots=p.isActive?'index,follow,max-image-preview:large':'noindex,nofollow';
+   ogType='product';
+   const media=(p.media||[]).find(m=>m&&m.src);
+   if(media?.src)image=new URL(media.src,origin).href;
+   if(p.isActive){
+    const productNode={
+     '@type':'Product',
+     '@id':canonical+'#product',
+     name:p.displayName||p.name,
+     description,
+     sku:p.slug,
+     url:canonical,
+     brand:p.brand?{'@type':'Brand',name:p.brand}:undefined,
+     category:p.category||undefined,
+     image:media?.src?[image]:undefined,
+     additionalProperty:[
+      p.concentration?{'@type':'PropertyValue',name:'Concentração',value:p.concentration}:null,
+      p.presentationFromUser?{'@type':'PropertyValue',name:'Apresentação',value:p.presentationFromUser}:null,
+      p.format?{'@type':'PropertyValue',name:'Formato',value:p.format}:null,
+      p.origin?{'@type':'PropertyValue',name:'Origem informada',value:p.origin}:null
+     ].filter(Boolean)
+    };
+    const breadcrumb={
+     '@type':'BreadcrumbList',
+     itemListElement:[
+      {'@type':'ListItem',position:1,name:'Início',item:origin+'/'},
+      {'@type':'ListItem',position:2,name:'Produtos',item:origin+'/produtos'},
+      {'@type':'ListItem',position:3,name:p.displayName||p.name,item:canonical}
+     ]
+    };
+    jsonLd={'@context':'https://schema.org','@graph':[productNode,breadcrumb]};
+   }
+  }else{
+   title='Produto não encontrado | Global Pharma';
+   description='O produto solicitado não está disponível.';
+   robots='noindex,nofollow';
+  }
+ }else if(path==='/produtos'){
+  title='Produtos e informações técnicas | Global Pharma';
+  description='Consulte o catálogo da Global Pharma com apresentação, procedência, conservação e documentação disponível por produto.';
+  canonical=origin+'/produtos';
+ }else if(path==='/entrega'){
+  title='Entrega e proteção do pedido | Global Pharma';
+  description='Entenda os prazos, rastreamento, proteção de entrega, conferência de ocorrências e procedimentos de atendimento da Global Pharma.';
+  canonical=origin+'/entrega';
+ }else if(path==='/transparencia'){
+  title='Transparência, procedência e documentação | Global Pharma';
+  description='Conheça os critérios de procedência, rastreabilidade, documentação, fabricantes e validação de informações adotados pela Global Pharma.';
+  canonical=origin+'/transparencia';
+ }else if(path==='/'){
+  jsonLd={
+   '@context':'https://schema.org',
+   '@type':'Organization',
+   name:'Global Pharma',
+   url:origin+'/',
+   logo:origin+'/assets/global-pharma-logo-transparent.png'
+  };
+ }else{
+  robots='noindex,nofollow';
+ }
+
+ document.title=title;
+ setSeoMeta('meta[name="description"]','name','description',description);
+ setSeoMeta('meta[name="robots"]','name','robots',robots);
+ setSeoMeta('meta[property="og:title"]','property','og:title',title);
+ setSeoMeta('meta[property="og:description"]','property','og:description',description);
+ setSeoMeta('meta[property="og:type"]','property','og:type',ogType);
+ setSeoMeta('meta[property="og:url"]','property','og:url',canonical);
+ setSeoMeta('meta[property="og:image"]','property','og:image',image);
+ setSeoMeta('meta[property="og:site_name"]','property','og:site_name','Global Pharma');
+ setSeoMeta('meta[name="twitter:card"]','name','twitter:card','summary_large_image');
+ setSeoMeta('meta[name="twitter:title"]','name','twitter:title',title);
+ setSeoMeta('meta[name="twitter:description"]','name','twitter:description',description);
+ setSeoMeta('meta[name="twitter:image"]','name','twitter:image',image);
+ setCanonical(canonical);
+ setSeoJsonLd(jsonLd);
+}
+
+function render(){const path=location.pathname;let html;if(path==='/')html=home();else if(path==='/produtos')html=productsPage();else if(path.startsWith('/produto/'))html=pdp(decodeURIComponent(path.split('/')[2]||''));else if(path==='/checkout')html=checkout();else if(path==='/admin')html=(state.isAdmin&&!state.mustChangePassword)?adminOverview():adminAccess();else if(path==='/admin/produtos')html=(state.isAdmin&&!state.mustChangePassword)?adminProducts():adminAccess();else if(path==='/admin/order-bumps')html=(state.isAdmin&&!state.mustChangePassword)?adminOrderBumps():adminAccess();else if(path==='/admin/order-bumps/metricas')html=(state.isAdmin&&!state.mustChangePassword)?orderBumpMetrics():adminAccess();else if(path==='/entrega')html=expressDeliveryPage();else if(path==='/transparencia')html=transparencyPage();else if(path==='/rastreamento')html=genericPage('Rastreamento','Área preparada para consulta de pedidos e acompanhamento logístico.');else if(path==='/contato')html=genericPage('Contato','Canal de atendimento da Global Pharma.');else if(path==='/ajuda')html=genericPage('Ajuda','Central de suporte e dúvidas frequentes.');else if(path==='/termos')html=genericPage('Termos de uso','Conteúdo jurídico será conectado à versão definitiva.');else if(path==='/privacidade')html=genericPage('Privacidade','Política de privacidade será conectada à versão definitiva.');else if(path==='/trocas-e-devolucoes')html=genericPage('Trocas e devoluções','Política operacional será conectada à versão definitiva.');else html=genericPage('Página não encontrada','O endereço solicitado não existe.');app.innerHTML=html;updateSeo(path);bind();}
 
 function bind(){
  document.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>addToCart(b.dataset.add));

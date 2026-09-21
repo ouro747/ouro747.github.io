@@ -188,6 +188,50 @@ export async function loadOrderBumpEvents() {
   return data || [];
 }
 
+
+const rowToLandingPage = (row) => ({
+  id: row.id,
+  slug: row.slug,
+  name: row.name,
+  template: row.template,
+  payload: row.payload || {},
+  isActive: row.is_active !== false,
+  isIndexable: row.is_indexable === true,
+  createdAt: row.created_at,
+  updatedAt: row.updated_at
+});
+
+export async function loadLandingPages(includeInactive = false) {
+  let query = supabase
+    .from('landing_pages')
+    .select('id,slug,name,template,payload,is_active,is_indexable,created_at,updated_at')
+    .order('created_at', { ascending: true });
+  if (!includeInactive) query = query.eq('is_active', true);
+  const { data, error } = await query;
+  if (error) throw error;
+  return (data || []).map(rowToLandingPage);
+}
+
+export async function upsertLandingPage(page) {
+  const row = {
+    id: page.id || undefined,
+    slug: page.slug,
+    name: page.name,
+    template: page.template || 'direct-response',
+    payload: page.payload || {},
+    is_active: page.isActive !== false,
+    is_indexable: page.isIndexable === true
+  };
+  if (!row.id) delete row.id;
+  const { data, error } = await supabase
+    .from('landing_pages')
+    .upsert(row, { onConflict: 'id' })
+    .select('id,slug,name,template,payload,is_active,is_indexable,created_at,updated_at')
+    .single();
+  if (error) throw error;
+  return rowToLandingPage(data);
+}
+
 export async function loadCloudProducts(includeArchived = false) {
   let query = supabase
     .from('products')

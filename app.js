@@ -1,5 +1,6 @@
 import {DEFAULT_PRODUCTS, SECTION_KEYS, normalizeProduct} from './data.js?v=20260921-0935';
-import {getAuthState,onAuthChange,signInAdmin,signOutAdmin,updateAdminPassword,loadCloudProducts,upsertCloudProduct,replaceCloudProducts,loadOrderBumps,upsertOrderBump,recordOrderBumpEvent,loadOrderBumpEvents} from './supabase.js?v=20260921-0935';
+import {getAuthState,onAuthChange,signInAdmin,signOutAdmin,updateAdminPassword,loadCloudProducts,upsertCloudProduct,replaceCloudProducts,loadOrderBumps,upsertOrderBump,recordOrderBumpEvent,loadOrderBumpEvents,loadLandingPages,upsertLandingPage} from './supabase.js?v=20260921-1510';
+import {renderMassaLimpa,renderLandingAdmin,collectLandingEditor} from './landing-pages.js?v=20260921-1510';
 import {createCheckoutPayment} from './payment-adapter.js?v=20260921-0935';
 
 const app = document.querySelector('#app');
@@ -9,7 +10,7 @@ const BUMP_SELECTION_KEY='gp_global_pharma_order_bumps_v1';
 const CHECKOUT_SESSION_KEY='gp_global_pharma_checkout_session_v1';
 const loadBumpSelections=()=>{try{return JSON.parse(localStorage.getItem(BUMP_SELECTION_KEY)||'[]')}catch{return[]}};
 const checkoutSessionId=(()=>{let id=localStorage.getItem(CHECKOUT_SESSION_KEY);if(!id){id=crypto.randomUUID();localStorage.setItem(CHECKOUT_SESSION_KEY,id)}return id})();
-const state={products:loadProducts(),cart:loadCart(),cartOpen:false,adminEditing:null,adminTab:'geral',selectedShipping:'basic',galleryIndex:0,heroIndex:0,authUser:null,isAdmin:false,mustChangePassword:false,cloudReady:false,orderBumps:[],orderBumpEditing:null,orderBumpEvents:[],selectedBumpIds:loadBumpSelections(),checkoutSessionId,checkoutPaymentMethod:'pix'};
+const state={products:loadProducts(),cart:loadCart(),cartOpen:false,adminEditing:null,adminTab:'geral',selectedShipping:'basic',galleryIndex:0,heroIndex:0,authUser:null,isAdmin:false,mustChangePassword:false,cloudReady:false,orderBumps:[],orderBumpEditing:null,orderBumpEvents:[],selectedBumpIds:loadBumpSelections(),checkoutSessionId,checkoutPaymentMethod:'pix',landingPages:[],landingEditing:null};
 let heroTimer=null;
 let headerScrollHandler=null;
 
@@ -28,6 +29,16 @@ async function refreshCloudProducts(){
   }catch(err){
     console.error('Falha ao sincronizar catálogo com Supabase',err);
     state.cloudReady=true;
+    return false;
+  }
+}
+async function refreshLandingPages(){
+  try{
+    state.landingPages=await loadLandingPages(state.isAdmin&&!state.mustChangePassword);
+    return true;
+  }catch(err){
+    console.error('Falha ao sincronizar landing pages',err);
+    state.landingPages=[];
     return false;
   }
 }

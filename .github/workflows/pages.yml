@@ -30,6 +30,7 @@ jobs:
           node --check data.js
           node --check supabase.js
           node --check payment-adapter.js
+          node --check landing-pages.js
 
       - name: Validate static frontend
         shell: bash

@@ -486,137 +486,6 @@ function transparencyPage(){
  </main>`);
 }
 
-function stackPreviewPage(){
- const components=[
-  ['Enantato de Testosterona','250 mg/mL','10 mL','Componente 1 do Stack','Informações de apresentação, origem, conservação e documentação organizadas em um único fluxo.'],
-  ['Enantato de Metenolona (Primobolan)','100 mg/mL','10 mL','Componente 2 do Stack','Apresentação identificada separadamente, com dados técnicos e procedência próprios.'],
-  ['Stanozolol Oleoso (Winstrol)','50 mg/mL','10 mL','Componente 3 do Stack','Terceiro item da composição, apresentado com concentração, formato e identificação individual.']
- ];
- const logic=[
-  ['Produto isolado','Você analisa cada item separadamente, com preços, documentos e condições em páginas diferentes.'],
-  ['Stack organizado','Os três componentes aparecem reunidos em uma única oferta, com composição, valor, documentação e condições apresentadas de forma centralizada.'],
-  ['Decisão mais clara','O visitante entende exatamente o que compõe o Stack antes de avançar para qualquer etapa seguinte.']
- ];
- const qualifies=[
-  'Quer visualizar os três componentes da oferta em uma única página.',
-  'Valoriza procedência, identificação do fabricante e clareza documental.',
-  'Prefere comparar a composição completa antes de tomar uma decisão.',
-  'Quer entender preço, apresentação e proteção de entrega em um único lugar.'
- ];
- return shell(`<main class="stack-preview-page">
-  <section class="stack-top-alert"><div class="container"><strong>PRÉVIA DA OFERTA</strong><span>Disponibilidade e estoque devem ser confirmados antes da publicação comercial.</span></div></section>
-
-  <section class="stack-hero">
-   <div class="container stack-hero-grid">
-    <div class="stack-hero-copy">
-     <span class="stack-eyebrow">STACK ESPECIAL · BRATVA LABS</span>
-     <h1>Três apresentações reunidas em uma única oferta, com composição e informações organizadas em um só lugar.</h1>
-     <p class="stack-lead">Uma página especial para apresentar <strong>Enantato de Testosterona 250 mg/mL</strong>, <strong>Enantato de Metenolona 100 mg/mL</strong> e <strong>Stanozolol Oleoso 50 mg/mL</strong> como um Stack único, sem transformar a experiência em uma PDP tradicional.</p>
-     <p>O foco aqui é clareza: o que está incluído, como cada componente é apresentado, quais informações estão disponíveis e quais condições acompanham a oferta.</p>
-     <div class="stack-actions"><a class="btn btn-primary btn-lg" href="#composicao">VER COMPOSIÇÃO DO STACK</a><a class="btn btn-secondary btn-lg" href="/contato" data-route>TIRAR UMA DÚVIDA</a></div>
-    </div>
-    <aside class="stack-hero-panel">
-      <span>STACK COMPLETO</span>
-      <strong>3</strong>
-      <p>componentes Bratva Labs apresentados em uma única estrutura.</p>
-      <div><b>01</b> Enantato de Testosterona</div>
-      <div><b>02</b> Primobolan</div>
-      <div><b>03</b> Stanozolol Oleoso</div>
-    </aside>
-   </div>
-  </section>
-
-  <section class="stack-section">
-   <div class="container stack-copy-grid">
-    <div><span class="stack-index">01</span><span class="stack-kicker">Abertura</span><h2>Uma oferta complexa não deveria parecer confusa.</h2></div>
-    <div class="stack-copy">
-      <p>Quando uma oferta reúne vários componentes, o visitante precisa entender imediatamente o que está levando, quais são as apresentações e onde conferir cada informação importante.</p>
-      <p>Por isso, esta página não tenta resumir três produtos diferentes em uma única ficha técnica. Ela apresenta o Stack como uma <strong>oferta composta</strong>, mantendo a identidade e os dados de cada item separados.</p>
-      <strong class="stack-emphasis">A Big Idea aqui é simples: três componentes, uma única oferta, informação organizada.</strong>
-    </div>
-   </div>
-  </section>
-
-  <section class="stack-section stack-soft" id="composicao">
-   <div class="container">
-    <div class="stack-heading"><span class="stack-index">02</span><span class="stack-kicker">Composição</span><h2>O que está incluído no Stack.</h2><p>Cada componente mantém sua própria identidade técnica dentro da oferta.</p></div>
-    <div class="stack-component-grid">
-      ${components.map(([name,conc,size,label,text],i)=>`<article class="stack-component"><span class="stack-component-num">0${i+1}</span><small>${esc(label)}</small><h3>${esc(name)}</h3><div class="stack-component-specs"><span>${esc(conc)}</span><span>${esc(size)}</span><span>Bratva Labs</span></div><p>${esc(text)}</p><a href="/produtos" data-route>Ver informações técnicas →</a></article>`).join('')}
-    </div>
-  </section>
-
-  <section class="stack-section">
-   <div class="container">
-    <div class="stack-heading"><span class="stack-index">03</span><span class="stack-kicker">Mecanismo da oferta</span><h2>Por que apresentar como Stack em vez de três produtos soltos?</h2><p>O mecanismo comercial da página não é uma promessa biológica. É a organização da oferta.</p></div>
-    <div class="stack-logic-grid">
-      ${logic.map(([title,text],i)=>`<article><span>0${i+1}</span><h3>${esc(title)}</h3><p>${esc(text)}</p></article>`).join('')}
-    </div>
-    <div class="stack-callout"><strong>O que esta página não faz:</strong><p>não define ciclo, dose, frequência, duração, combinação de uso ou promessa de transformação física. Essas informações dependem de avaliação e orientação profissional adequada.</p></div>
-  </section>
-
-  <section class="stack-section stack-deep">
-   <div class="container">
-    <div class="stack-heading light"><span class="stack-index">04</span><span class="stack-kicker">Demonstração e prova</span><h2>Procedência, identificação e documentação precisam aparecer antes da oferta.</h2><p>Uma página de Stack só funciona se a prova acompanhar a apresentação.</p></div>
-    <div class="stack-proof-grid">
-      <article><span>01</span><h3>Fabricante identificado</h3><p>Bratva Labs, com origem cadastrada em Paraguai / Asunción.</p></article>
-      <article><span>02</span><h3>Produtos separados</h3><p>Cada item mantém nome, concentração, apresentação e dados próprios.</p></article>
-      <article><span>03</span><h3>Documentação por componente</h3><p>Arquivos e referências aparecem apenas quando estiverem efetivamente disponíveis.</p></article>
-      <article><span>04</span><h3>Proteção de entrega</h3><p>As condições de transporte e atendimento seguem a política publicada da Global Pharma.</p></article>
-    </div>
-    <a class="btn btn-secondary" href="/transparencia" data-route>VER POLÍTICA DE TRANSPARÊNCIA</a>
-  </section>
-
-  <section class="stack-section">
-   <div class="container">
-    <div class="stack-heading"><span class="stack-index">05</span><span class="stack-kicker">Qualificação</span><h2>Para quem esta página foi desenhada.</h2></div>
-    <div class="stack-qualification-grid">
-      <div class="stack-qualified"><span>✓</span><h3>Faz sentido para quem:</h3><ul>${qualifies.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>
-      <div class="stack-not-qualified"><span>!</span><h3>Não é uma página para:</h3><ul><li>buscar orientação de dose ou protocolo de uso;</li><li>substituir acompanhamento médico ou farmacêutico;</li><li>procurar promessas garantidas de resultado físico;</li><li>usar alegações não documentadas como prova.</li></ul></div>
-    </div>
-  </section>
-
-  <section class="stack-section stack-soft">
-   <div class="container">
-    <div class="stack-heading"><span class="stack-index">06</span><span class="stack-kicker">Empilhamento de valor</span><h2>O valor percebido vem da composição completa da oferta.</h2><p>Em vez de esconder o cálculo, a página mostra cada parte separadamente.</p></div>
-    <div class="stack-value-layout">
-      <div class="stack-value-list">
-        <div><span>Enantato de Testosterona 250 mg/mL</span><strong>componente 01</strong></div>
-        <div><span>Enantato de Metenolona 100 mg/mL</span><strong>componente 02</strong></div>
-        <div><span>Stanozolol Oleoso 50 mg/mL</span><strong>componente 03</strong></div>
-        <div><span>Proteção de entrega</span><strong>incluída</strong></div>
-        <div><span>Informações centralizadas</span><strong>incluídas</strong></div>
-      </div>
-      <aside class="stack-offer-card">
-        <span>PREVIEW DE OFERTA</span>
-        <h3>Stack Completo</h3>
-        <p>O valor comercial definitivo, bônus e condições devem ser publicados apenas quando estiverem confirmados.</p>
-        <div class="stack-offer-placeholder">VALOR A CONFIRMAR</div>
-        <a class="btn btn-primary" href="/contato" data-route>SOLICITAR INFORMAÇÕES</a>
-      </aside>
-    </div>
-  </section>
-
-  <section class="stack-section">
-   <div class="container">
-    <div class="stack-heading"><span class="stack-index">07</span><span class="stack-kicker">Reversão de risco</span><h2>Proteção de entrega clara, sem promessas vagas.</h2></div>
-    <div class="stack-guarantee">
-      <div class="stack-guarantee-icon">🛡️</div>
-      <div><h3>Proteção de Entrega Global Pharma</h3><p>Quando houver uma ocorrência coberta pela política publicada, o atendimento segue as condições de reenvio ou reembolso descritas na página de Entrega Expressa.</p><a href="/entrega" data-route>Consultar condições completas →</a></div>
-    </div>
-  </section>
-
-  <section class="stack-final">
-   <div class="container">
-     <span class="stack-index">08</span><span class="stack-kicker">CTA final</span>
-     <h2>Entenda exatamente o que compõe o Stack antes de avançar.</h2>
-     <p>Composição clara, informações por componente, procedência identificada e condições de entrega em um único fluxo.</p>
-     <div class="stack-actions"><a class="btn btn-primary btn-lg" href="#composicao">REVISAR COMPOSIÇÃO DO STACK</a><a class="btn btn-secondary btn-lg" href="/contato" data-route>FALAR COM A GLOBAL PHARMA</a></div>
-     <small>Prévia estrutural para análise. Esta página não contém orientação de uso, protocolo de doses ou promessa garantida de resultado.</small>
-   </div>
-  </section>
- </main>`);
-}
-
 function genericPage(title,text){return shell(`<main><section class="page-hero"><div class="container"><span class="badge">Global Pharma</span><h1>${esc(title)}</h1><p>${esc(text)}</p></div></section><section class="section"><div class="container"><div class="card info-block"><h2>${esc(title)}</h2><p class="pdp-sub">${esc(text)}</p></div></div></section></main>`)}
 
 function checkout(){
@@ -914,7 +783,7 @@ function updateSeo(path){
  setSeoJsonLd(jsonLd);
 }
 
-function render(){const path=location.pathname.replace(/\/+$/,'')||'/';let html;if(path==='/')html=home();else if(path==='/produtos')html=productsPage();else if(path.startsWith('/produto/'))html=pdp(decodeURIComponent(path.split('/')[2]||''));else if(path==='/checkout')html=checkout();else if(path==='/admin')html=(state.isAdmin&&!state.mustChangePassword)?adminOverview():adminAccess();else if(path==='/admin/produtos')html=(state.isAdmin&&!state.mustChangePassword)?adminProducts():adminAccess();else if(path==='/admin/order-bumps')html=(state.isAdmin&&!state.mustChangePassword)?adminOrderBumps():adminAccess();else if(path==='/admin/order-bumps/metricas')html=(state.isAdmin&&!state.mustChangePassword)?orderBumpMetrics():adminAccess();else if(path==='/entrega')html=expressDeliveryPage();else if(path==='/transparencia')html=transparencyPage();else if(path==='/preview/stack-trio')html=stackPreviewPage();else if(path==='/rastreamento')html=genericPage('Rastreamento','Área preparada para consulta de pedidos e acompanhamento logístico.');else if(path==='/contato')html=genericPage('Contato','Canal de atendimento da Global Pharma.');else if(path==='/ajuda')html=genericPage('Ajuda','Central de suporte e dúvidas frequentes.');else if(path==='/termos')html=genericPage('Termos de uso','Conteúdo jurídico será conectado à versão definitiva.');else if(path==='/privacidade')html=genericPage('Privacidade','Política de privacidade será conectada à versão definitiva.');else if(path==='/trocas-e-devolucoes')html=genericPage('Trocas e devoluções','Política operacional será conectada à versão definitiva.');else html=genericPage('Página não encontrada','O endereço solicitado não existe.');app.innerHTML=html;updateSeo(path);bind();}
+function render(){const path=location.pathname.replace(/\/+$/,'')||'/';let html;if(path==='/')html=home();else if(path==='/produtos')html=productsPage();else if(path.startsWith('/produto/'))html=pdp(decodeURIComponent(path.split('/')[2]||''));else if(path==='/checkout')html=checkout();else if(path==='/admin')html=(state.isAdmin&&!state.mustChangePassword)?adminOverview():adminAccess();else if(path==='/admin/produtos')html=(state.isAdmin&&!state.mustChangePassword)?adminProducts():adminAccess();else if(path==='/admin/order-bumps')html=(state.isAdmin&&!state.mustChangePassword)?adminOrderBumps():adminAccess();else if(path==='/admin/order-bumps/metricas')html=(state.isAdmin&&!state.mustChangePassword)?orderBumpMetrics():adminAccess();else if(path==='/entrega')html=expressDeliveryPage();else if(path==='/transparencia')html=transparencyPage();else if(path==='/rastreamento')html=genericPage('Rastreamento','Área preparada para consulta de pedidos e acompanhamento logístico.');else if(path==='/contato')html=genericPage('Contato','Canal de atendimento da Global Pharma.');else if(path==='/ajuda')html=genericPage('Ajuda','Central de suporte e dúvidas frequentes.');else if(path==='/termos')html=genericPage('Termos de uso','Conteúdo jurídico será conectado à versão definitiva.');else if(path==='/privacidade')html=genericPage('Privacidade','Política de privacidade será conectada à versão definitiva.');else if(path==='/trocas-e-devolucoes')html=genericPage('Trocas e devoluções','Política operacional será conectada à versão definitiva.');else html=genericPage('Página não encontrada','O endereço solicitado não existe.');app.innerHTML=html;updateSeo(path);bind();}
 
 function bind(){
  document.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>addToCart(b.dataset.add));

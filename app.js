@@ -8,7 +8,7 @@ const BUMP_SELECTION_KEY='gp_global_pharma_order_bumps_v1';
 const CHECKOUT_SESSION_KEY='gp_global_pharma_checkout_session_v1';
 const loadBumpSelections=()=>{try{return JSON.parse(localStorage.getItem(BUMP_SELECTION_KEY)||'[]')}catch{return[]}};
 const checkoutSessionId=(()=>{let id=localStorage.getItem(CHECKOUT_SESSION_KEY);if(!id){id=crypto.randomUUID();localStorage.setItem(CHECKOUT_SESSION_KEY,id)}return id})();
-const state={products:loadProducts(),cart:loadCart(),cartOpen:false,adminEditing:null,adminTab:'geral',selectedShipping:'basic',galleryIndex:0,heroIndex:0,authUser:null,isAdmin:false,mustChangePassword:false,cloudReady:false,orderBumps:[],orderBumpEditing:null,orderBumpEvents:[],selectedBumpIds:loadBumpSelections(),checkoutSessionId};
+const state={products:loadProducts(),cart:loadCart(),cartOpen:false,adminEditing:null,adminTab:'geral',selectedShipping:'basic',galleryIndex:0,heroIndex:0,authUser:null,isAdmin:false,mustChangePassword:false,cloudReady:false,orderBumps:[],orderBumpEditing:null,orderBumpEvents:[],selectedBumpIds:loadBumpSelections(),checkoutSessionId,checkoutPaymentMethod:'pix'};
 let heroTimer=null;
 let headerScrollHandler=null;
 

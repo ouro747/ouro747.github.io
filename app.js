@@ -1,10 +1,14 @@
 import {DEFAULT_PRODUCTS, SECTION_KEYS, normalizeProduct} from './data.js';
-import {getAuthState,onAuthChange,signInAdmin,signOutAdmin,updateAdminPassword,loadCloudProducts,upsertCloudProduct,replaceCloudProducts} from './supabase.js';
+import {getAuthState,onAuthChange,signInAdmin,signOutAdmin,updateAdminPassword,loadCloudProducts,upsertCloudProduct,replaceCloudProducts,loadOrderBumps,upsertOrderBump,recordOrderBumpEvent,loadOrderBumpEvents} from './supabase.js';
 
 const app = document.querySelector('#app');
 const DB_KEY='gp_global_pharma_products_empty_v1';
 const CART_KEY='gp_global_pharma_cart_empty_v1';
-const state={products:loadProducts(),cart:loadCart(),cartOpen:false,adminEditing:null,adminTab:'geral',selectedShipping:'basic',galleryIndex:0,heroIndex:0,authUser:null,isAdmin:false,mustChangePassword:false,cloudReady:false};
+const BUMP_SELECTION_KEY='gp_global_pharma_order_bumps_v1';
+const CHECKOUT_SESSION_KEY='gp_global_pharma_checkout_session_v1';
+const loadBumpSelections=()=>{try{return JSON.parse(localStorage.getItem(BUMP_SELECTION_KEY)||'[]')}catch{return[]}};
+const checkoutSessionId=(()=>{let id=localStorage.getItem(CHECKOUT_SESSION_KEY);if(!id){id=crypto.randomUUID();localStorage.setItem(CHECKOUT_SESSION_KEY,id)}return id})();
+const state={products:loadProducts(),cart:loadCart(),cartOpen:false,adminEditing:null,adminTab:'geral',selectedShipping:'basic',galleryIndex:0,heroIndex:0,authUser:null,isAdmin:false,mustChangePassword:false,cloudReady:false,orderBumps:[],orderBumpEditing:null,orderBumpEvents:[],selectedBumpIds:loadBumpSelections(),checkoutSessionId};
 let heroTimer=null;
 let headerScrollHandler=null;
 
@@ -25,6 +29,32 @@ async function refreshCloudProducts(){
     state.cloudReady=true;
     return false;
   }
+}
+async function refreshOrderBumps(){
+  try{
+    state.orderBumps=await loadOrderBumps(state.isAdmin&&!state.mustChangePassword);
+    return true;
+  }catch(err){
+    console.error('Falha ao sincronizar order bumps',err);
+    state.orderBumps=[];
+    return false;
+  }
+}
+async function refreshOrderBumpMetrics(){
+  if(!state.isAdmin||state.mustChangePassword){state.orderBumpEvents=[];return false}
+  try{
+    state.orderBumpEvents=await loadOrderBumpEvents();
+    return true;
+  }catch(err){
+    console.error('Falha ao carregar métricas de order bump',err);
+    state.orderBumpEvents=[];
+    return false;
+  }
+}
+function saveBumpSelections(){localStorage.setItem(BUMP_SELECTION_KEY,JSON.stringify(state.selectedBumpIds))}
+function eligibleOrderBumps(items){
+  const productIds=new Set(items.map(x=>x.p?.id).filter(Boolean));
+  return state.orderBumps.filter(b=>b.isActive && (!b.triggerProductId || productIds.has(b.triggerProductId)));
 }
 async function refreshAuth(){
   try{

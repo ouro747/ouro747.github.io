@@ -487,9 +487,82 @@ function transparencyPage(){
 
 function genericPage(title,text){return shell(`<main><section class="page-hero"><div class="container"><span class="badge">Global Pharma</span><h1>${esc(title)}</h1><p>${esc(text)}</p></div></section><section class="section"><div class="container"><div class="card info-block"><h2>${esc(title)}</h2><p class="pdp-sub">${esc(text)}</p></div></div></section></main>`)}
 
-function checkout(){const items=state.cart.map(i=>({i,p:state.products.find(p=>p.slug===i.slug)})).filter(x=>x.p);const total=items.reduce((a,{i,p})=>a+(i.shipping==='express'&&p.expressAvailable?p.pricing.express:p.pricing.basic)*i.qty,0);return shell(`<main><section class="page-hero"><div class="container"><span class="badge">Checkout</span><h1>Finalizar pedido</h1><p>Estrutura visual pronta. A conexão com PYX Gate será plugada no adapter de pagamento, sem expor segredo no navegador.</p></div></section><section class="section" style="padding-top:20px"><div class="container checkout-grid"><form id="checkoutForm" class="card info-block"><h2>Dados do cliente</h2><div class="form-grid"><div class="field"><label>Nome completo</label><input class="input" name="name" required></div><div class="field"><label>CPF</label><input class="input" name="document" required></div><div class="field"><label>E-mail</label><input class="input" type="email" name="email" required></div><div class="field"><label>Telefone</label><input class="input" name="phone" required></div><div class="field"><label>CEP</label><input class="input" name="postal" required></div><div class="field"><label>Cidade</label><input class="input" name="city" required></div><div class="field"><label>Estado</label><input class="input" name="state" required></div><div class="field full"><label>Endereço</label><input class="input" name="address" required></div></div><button class="btn btn-primary" style="width:100%;margin-top:16px">GERAR PAGAMENTO (MODO DEMO)</button></form><aside class="card summary"><h2>Resumo</h2>${items.length?items.map(({i,p})=>`<div class="summary-line"><span>${esc(p.displayName)} × ${i.qty}</span><strong>${money((i.shipping==='express'?p.pricing.express:p.pricing.basic)*i.qty)}</strong></div>`).join(''):`<div class="empty">Seu carrinho está vazio.</div>`}<div class="summary-line summary-total"><span>Total</span><span>${money(total)}</span></div></aside></div></section></main>`)}
+function checkout(){
+ const items=state.cart.map(i=>({i,p:state.products.find(p=>p.slug===i.slug)})).filter(x=>x.p);
+ const subtotal=items.reduce((sum,{i,p})=>sum+(i.shipping==='express'&&p.expressAvailable?p.pricing.express:p.pricing.basic)*i.qty,0);
+ const bumps=eligibleOrderBumps(items);
+ const selected=new Set(state.selectedBumpIds);
+ const selectedBumps=bumps.filter(b=>selected.has(b.id));
+ const bumpTotal=selectedBumps.reduce((sum,b)=>sum+(b.priceCents/100),0);
+ const total=subtotal+bumpTotal;
+ const bumpCards=bumps.map(b=>{
+   const product=state.products.find(p=>p.id===b.productId);
+   const image=b.imageUrl||product?.media?.find(m=>m.src)?.src||'';
+   const checked=selected.has(b.id);
+   return `<label class="order-bump-card ${checked?'selected':''}" data-bump-card="${esc(b.id)}">
+     <input type="checkbox" data-order-bump="${esc(b.id)}" ${checked?'checked':''}>
+     <span class="order-bump-check">✓</span>
+     ${image?`<img class="order-bump-image" src="${esc(image)}" alt="">`:`<div class="order-bump-image order-bump-placeholder">+</div>`}
+     <span class="order-bump-copy">
+       ${b.badge?`<small class="order-bump-badge">${esc(b.badge)}</small>`:''}
+       <strong>${esc(b.title)}</strong>
+       ${b.description?`<span>${esc(b.description)}</span>`:''}
+       <span class="order-bump-price">${b.compareAtCents!=null?`<del>${money(b.compareAtCents/100)}</del>`:''}<b>${money(b.priceCents/100)}</b></span>
+       <em>${esc(b.checkboxLabel)}</em>
+     </span>
+   </label>`;
+ }).join('');
+ const paymentCopy=state.checkoutPaymentMethod==='pix'
+   ?'<strong>Pix</strong><span>O QR Code e o copia-e-cola serão gerados aqui pelo gateway após a integração.</span>'
+   :state.checkoutPaymentMethod==='card'
+     ?'<strong>Cartão</strong><span>Os campos seguros/tokenizados do provedor serão carregados aqui. O site não armazenará número do cartão nem CVV.</span>'
+     :'<strong>Boleto</strong><span>O boleto será gerado aqui pelo provedor de pagamento após a integração.</span>';
+ return shell(`<main class="transparent-checkout">
+  <section class="checkout-head"><div class="container"><span class="badge">Checkout seguro</span><h1>Finalize seu pedido sem sair da Global Pharma.</h1><p>Dados, entrega, ofertas adicionais e pagamento em um único fluxo.</p></div></section>
+  <section class="checkout-section"><div class="container checkout-grid checkout-grid-premium">
+   <form id="checkoutForm" class="checkout-main">
+    <section class="card checkout-block"><div class="checkout-step-title"><span>1</span><div><small>Identificação</small><h2>Seus dados</h2></div></div><div class="form-grid">
+     <div class="field"><label>Nome completo</label><input class="input" name="name" autocomplete="name" required></div>
+     <div class="field"><label>CPF</label><input class="input" name="document" inputmode="numeric" required></div>
+     <div class="field"><label>E-mail</label><input class="input" type="email" name="email" autocomplete="email" required></div>
+     <div class="field"><label>Telefone</label><input class="input" name="phone" autocomplete="tel" required></div>
+    </div></section>
 
-function adminShell(content,active='produtos'){return header()+`<div class="admin-layout"><aside class="admin-side"><h3>Admin</h3><a class="admin-link ${active==='inicio'?'active':''}" href="/admin" data-route>Visão geral</a><a class="admin-link ${active==='produtos'?'active':''}" href="/admin/produtos" data-route>Produtos</a><a class="admin-link" href="/" data-route>Ver site</a><button class="admin-link" id="adminLogout" type="button" style="width:100%;text-align:left;background:none;border:0;cursor:pointer">Sair</button></aside><main class="admin-main">${content}</main></div>`}
+    <section class="card checkout-block"><div class="checkout-step-title"><span>2</span><div><small>Entrega</small><h2>Endereço</h2></div></div><div class="form-grid">
+     <div class="field"><label>CEP</label><input class="input" name="postal" autocomplete="postal-code" required></div>
+     <div class="field"><label>Cidade</label><input class="input" name="city" autocomplete="address-level2" required></div>
+     <div class="field"><label>Estado</label><input class="input" name="state" autocomplete="address-level1" required></div>
+     <div class="field"><label>Número</label><input class="input" name="number" required></div>
+     <div class="field full"><label>Endereço</label><input class="input" name="address" autocomplete="street-address" required></div>
+     <div class="field full"><label>Complemento</label><input class="input" name="complement"></div>
+    </div></section>
+
+    ${bumps.length?`<section class="card checkout-block order-bumps-block"><div class="checkout-step-title"><span>+</span><div><small>Oferta exclusiva</small><h2>Adicione ao seu pedido</h2></div></div><div class="order-bumps-list">${bumpCards}</div></section>`:''}
+
+    <section class="card checkout-block"><div class="checkout-step-title"><span>3</span><div><small>Pagamento</small><h2>Como deseja pagar?</h2></div></div>
+     <div class="payment-methods">
+      <button type="button" class="payment-method ${state.checkoutPaymentMethod==='pix'?'active':''}" data-payment-method="pix">Pix</button>
+      <button type="button" class="payment-method ${state.checkoutPaymentMethod==='card'?'active':''}" data-payment-method="card">Cartão</button>
+      <button type="button" class="payment-method ${state.checkoutPaymentMethod==='boleto'?'active':''}" data-payment-method="boleto">Boleto</button>
+     </div>
+     <div class="payment-provider-slot">${paymentCopy}</div>
+     <div class="checkout-security-note">🔒 O processamento real será feito pelo gateway em ambiente seguro. Nenhum segredo de API ou dado sensível de cartão ficará exposto no navegador.</div>
+     <button class="btn btn-primary btn-lg checkout-pay-button" type="submit" ${items.length?'':'disabled'}>CONTINUAR PARA PAGAMENTO · ${money(total)}</button>
+    </section>
+   </form>
+
+   <aside class="card checkout-summary">
+    <div class="checkout-summary-head"><h2>Resumo do pedido</h2><span>${cartCount()} ${cartCount()===1?'item':'itens'}</span></div>
+    ${items.length?items.map(({i,p})=>`<div class="checkout-summary-line"><div><strong>${esc(p.displayName)}</strong><small>${i.shipping==='express'?'Entrega expressa':'Entrega padrão'} · Qtd. ${i.qty}</small></div><b>${money((i.shipping==='express'&&p.expressAvailable?p.pricing.express:p.pricing.basic)*i.qty)}</b></div>`).join(''):`<div class="empty">Seu carrinho está vazio.</div>`}
+    ${selectedBumps.map(b=>`<div class="checkout-summary-line bump"><div><strong>+ ${esc(b.title)}</strong><small>Order bump</small></div><b>${money(b.priceCents/100)}</b></div>`).join('')}
+    <div class="checkout-summary-totals"><div><span>Produtos</span><strong>${money(subtotal)}</strong></div>${bumpTotal?`<div><span>Ofertas adicionadas</span><strong>${money(bumpTotal)}</strong></div>`:''}<div class="grand"><span>Total</span><strong>${money(total)}</strong></div></div>
+    <div class="checkout-trust"><span>✓ Compra protegida</span><span>✓ Proteção de entrega</span><span>✓ Atendimento especializado</span></div>
+   </aside>
+  </div></section>
+ </main>`);
+}
+
+function adminShell(content,active='produtos'){return header()+`<div class="admin-layout"><aside class="admin-side"><h3>Admin</h3><a class="admin-link ${active==='inicio'?'active':''}" href="/admin" data-route>Visão geral</a><a class="admin-link ${active==='produtos'?'active':''}" href="/admin/produtos" data-route>Produtos</a><a class="admin-link ${active==='bumps'?'active':''}" href="/admin/order-bumps" data-route>Order bumps</a><a class="admin-link ${active==='metricas'?'active':''}" href="/admin/order-bumps/metricas" data-route>Métricas dos bumps</a><a class="admin-link" href="/" data-route>Ver site</a><button class="admin-link" id="adminLogout" type="button" style="width:100%;text-align:left;background:none;border:0;cursor:pointer">Sair</button></aside><main class="admin-main">${content}</main></div>`}
 function adminAccess(){
   if(!state.authUser)return header()+`<main class="section"><div class="container" style="max-width:560px"><div class="card info-block"><span class="pdp-kicker">Área administrativa</span><h1 style="color:var(--navy)">Acesso ao painel</h1><p style="color:var(--muted)">Apenas o administrador autorizado pode acessar esta área.</p><form id="adminLoginForm" style="margin-top:20px"><div class="field"><label>E-mail</label><input class="input" type="email" value="vendettavenon@gmail.com" readonly></div><div class="field"><label>Senha</label><input class="input" type="password" name="password" autocomplete="current-password" required></div><button class="btn btn-primary" style="margin-top:12px;width:100%">ENTRAR</button></form></div></div></main>`;
   if(!state.isAdmin)return header()+`<main class="section"><div class="container" style="max-width:560px"><div class="card info-block"><span class="pdp-kicker">Acesso negado</span><h1 style="color:var(--navy)">Conta sem permissão</h1><p>Somente <strong>vendettavenon@gmail.com</strong> pode administrar este site.</p><button class="btn btn-secondary" id="adminLogout" type="button">Sair</button></div></div></main>`;
@@ -497,6 +570,81 @@ function adminAccess(){
   return '';
 }
 function adminOverview(){return adminShell(`<div class="admin-toolbar"><div><h1 style="margin:0;color:var(--navy)">Dashboard</h1><p style="color:var(--muted)">Catálogo conectado ao Supabase.</p></div></div><div class="trust-grid"><div class="card trust-card"><strong>${state.products.length}</strong><p>Produtos cadastrados</p></div><div class="card trust-card"><strong>${state.products.filter(p=>p.isActive).length}</strong><p>Produtos ativos</p></div><div class="card trust-card"><strong>${state.cart.length}</strong><p>Linhas no carrinho local</p></div><div class="card trust-card"><strong>Online</strong><p>Persistência centralizada no Supabase</p></div></div>`,'inicio')}
+function blankOrderBump(){return {id:'',internalName:'',title:'',description:'',productId:'',triggerProductId:'',imageUrl:'',badge:'Oferta exclusiva',checkboxLabel:'Sim, quero adicionar esta oferta ao meu pedido',priceCents:0,compareAtCents:null,maxQty:1,isActive:true,sortOrder:999,__new:true}}
+function adminOrderBumps(){
+ const rows=[...state.orderBumps].sort((a,b)=>a.sortOrder-b.sortOrder);
+ if(state.orderBumpEditing){
+  const b=state.orderBumpEditing;
+  const productOptions=state.products.map(p=>`<option value="${esc(p.id)}" ${b.productId===p.id?'selected':''}>${esc(p.displayName||p.name)}</option>`).join('');
+  const triggerOptions=state.products.map(p=>`<option value="${esc(p.id)}" ${b.triggerProductId===p.id?'selected':''}>${esc(p.displayName||p.name)}</option>`).join('');
+  return adminShell(`<div class="admin-toolbar"><div><h1 style="margin:0;color:var(--navy)">${b.__new?'Novo order bump':'Editar order bump'}</h1><p style="color:var(--muted)">Configure a oferta que aparece dentro do checkout.</p></div><div style="display:flex;gap:8px"><button class="btn btn-secondary" id="cancelBumpEdit">Cancelar</button><button class="btn btn-primary" id="saveOrderBump">Salvar order bump</button></div></div>
+   <form id="orderBumpForm" class="card bump-admin-form"><div class="editor-grid">
+    ${field('Nome interno','bump.internalName',b.internalName)}
+    ${field('Título da oferta','bump.title',b.title)}
+    ${area('Descrição','bump.description',b.description,'full')}
+    <div class="field"><label>Produto oferecido</label><select class="select" name="bump.productId"><option value="">Oferta personalizada / sem vínculo</option>${productOptions}</select></div>
+    <div class="field"><label>Exibir quando o carrinho contém</label><select class="select" name="bump.triggerProductId"><option value="">Qualquer produto</option>${triggerOptions}</select></div>
+    ${field('Imagem da oferta (URL)','bump.imageUrl',b.imageUrl,'url')}
+    ${field('Selo / badge','bump.badge',b.badge)}
+    ${field('Texto do checkbox','bump.checkboxLabel',b.checkboxLabel)}
+    ${field('Preço do bump (R$)','bump.priceReais',(b.priceCents/100)||0,'number')}
+    ${field('Preço de comparação (R$)','bump.compareAtReais',b.compareAtCents==null?'':b.compareAtCents/100,'number')}
+    ${field('Quantidade máxima','bump.maxQty',b.maxQty,'number')}
+    ${field('Ordem de exibição','bump.sortOrder',b.sortOrder,'number')}
+    <div class="field"><label>Status</label><select class="select" name="bump.isActive"><option value="true" ${b.isActive?'selected':''}>Ativo</option><option value="false" ${!b.isActive?'selected':''}>Arquivado</option></select></div>
+   </div><div class="completion"><strong>Regra:</strong> o preço do order bump é independente do preço normal do produto. A oferta só aparece no checkout quando estiver ativa e a condição de carrinho for atendida.</div></form>`,'bumps');
+ }
+ return adminShell(`<div class="admin-toolbar"><div><h1 style="margin:0;color:var(--navy)">Order bumps</h1><p style="color:var(--muted)">Cadastre ofertas adicionais exibidas dentro do checkout transparente.</p></div><button class="btn btn-primary" id="newOrderBump">+ Novo order bump</button></div>
+  ${rows.length?`<div class="admin-table"><table><thead><tr><th>Oferta</th><th>Preço</th><th>Gatilho</th><th>Status</th><th>Ações</th></tr></thead><tbody>${rows.map(b=>{const trigger=state.products.find(p=>p.id===b.triggerProductId);return `<tr><td><strong>${esc(b.internalName||b.title)}</strong><br><small>${esc(b.title)}</small></td><td>${money(b.priceCents/100)}</td><td>${trigger?esc(trigger.displayName||trigger.name):'Qualquer carrinho'}</td><td><span class="status ${b.isActive?'on':'off'}">${b.isActive?'ATIVO':'ARQUIVADO'}</span></td><td><button class="btn btn-secondary" data-edit-bump="${esc(b.id)}">Editar</button> <button class="btn ${b.isActive?'btn-danger':'btn-soft'}" data-toggle-bump="${esc(b.id)}">${b.isActive?'Arquivar':'Restaurar'}</button></td></tr>`}).join('')}</tbody></table></div>`:`<div class="empty">Nenhum order bump cadastrado. Crie o primeiro para começar a testar conversão no checkout.</div>`}`,'bumps');
+}
+function orderBumpMetrics(){
+ const cutoff=Date.now()-30*24*60*60*1000;
+ const events=state.orderBumpEvents.filter(e=>new Date(e.created_at).getTime()>=cutoff);
+ const count=t=>events.filter(e=>e.event_type===t).length;
+ const impressions=count('impression'),accepts=count('accept'),submits=count('checkout_submit');
+ const acceptRate=impressions?accepts/impressions*100:0;
+ const submitRate=impressions?submits/impressions*100:0;
+ const potential=state.orderBumps.reduce((sum,b)=>sum+events.filter(e=>e.order_bump_id===b.id&&e.event_type==='accept').length*(b.priceCents/100),0);
+ const rows=state.orderBumps.map(b=>{
+   const be=events.filter(e=>e.order_bump_id===b.id);
+   const imp=be.filter(e=>e.event_type==='impression').length;
+   const acc=be.filter(e=>e.event_type==='accept').length;
+   const sub=be.filter(e=>e.event_type==='checkout_submit').length;
+   return {b,imp,acc,sub,rate:imp?acc/imp*100:0,value:acc*(b.priceCents/100)};
+ }).sort((x,y)=>y.imp-x.imp);
+ return adminShell(`<div class="admin-toolbar"><div><h1 style="margin:0;color:var(--navy)">Métricas dos order bumps</h1><p style="color:var(--muted)">Últimos 30 dias · funil de exposição, aceite e avanço para pagamento.</p></div><a class="btn btn-secondary" href="/checkout" data-route>Ver checkout</a></div>
+  <div class="bump-metrics-grid">
+   <div class="card bump-metric"><small>Impressões</small><strong>${impressions}</strong><span>ofertas visualizadas</span></div>
+   <div class="card bump-metric"><small>Aceites</small><strong>${accepts}</strong><span>${acceptRate.toFixed(1)}% de aceite</span></div>
+   <div class="card bump-metric"><small>Avanços para pagamento</small><strong>${submits}</strong><span>${submitRate.toFixed(1)}% das impressões</span></div>
+   <div class="card bump-metric"><small>Valor potencial adicionado</small><strong>${money(potential)}</strong><span>não é receita confirmada</span></div>
+  </div>
+  <div class="card bump-metrics-note"><strong>Compra aprovada ainda não está sendo contabilizada.</strong><p>Essa métrica será adicionada quando o gateway transparente estiver conectado e devolver a confirmação real do pagamento.</p></div>
+  ${rows.length?`<div class="admin-table bump-metrics-table"><table><thead><tr><th>Order bump</th><th>Impressões</th><th>Aceites</th><th>Taxa de aceite</th><th>Avanços</th><th>Valor potencial</th></tr></thead><tbody>${rows.map(x=>`<tr><td><strong>${esc(x.b.internalName||x.b.title)}</strong></td><td>${x.imp}</td><td>${x.acc}</td><td>${x.rate.toFixed(1)}%</td><td>${x.sub}</td><td>${money(x.value)}</td></tr>`).join('')}</tbody></table></div>`:`<div class="empty">Cadastre um order bump para começar a gerar métricas.</div>`}`,'metricas');
+}
+function collectOrderBumpEditor(){
+ const form=document.querySelector('#orderBumpForm');
+ const base={...(state.orderBumpEditing||blankOrderBump())};
+ if(!form)return base;
+ const fd=new FormData(form);
+ base.internalName=String(fd.get('bump.internalName')||'').trim();
+ base.title=String(fd.get('bump.title')||'').trim();
+ base.description=String(fd.get('bump.description')||'').trim();
+ base.productId=String(fd.get('bump.productId')||'');
+ base.triggerProductId=String(fd.get('bump.triggerProductId')||'');
+ base.imageUrl=String(fd.get('bump.imageUrl')||'').trim();
+ base.badge=String(fd.get('bump.badge')||'').trim();
+ base.checkboxLabel=String(fd.get('bump.checkboxLabel')||'').trim();
+ base.priceCents=Math.max(0,Math.round(Number(fd.get('bump.priceReais')||0)*100));
+ const compare=String(fd.get('bump.compareAtReais')||'').trim();
+ base.compareAtCents=compare===''?null:Math.max(0,Math.round(Number(compare)*100));
+ base.maxQty=Math.max(1,Math.min(10,Number(fd.get('bump.maxQty')||1)));
+ base.sortOrder=Number(fd.get('bump.sortOrder')||999);
+ base.isActive=String(fd.get('bump.isActive'))==='true';
+ delete base.__new;
+ return base;
+}
+
 function adminProducts(){const rows=state.products.sort((a,b)=>a.sortOrder-b.sortOrder);return adminShell(`<div class="admin-toolbar"><div><h1 style="margin:0;color:var(--navy)">Produtos</h1><p style="color:var(--muted)">Edite todo o conteúdo da PDP. O que ficar vazio não aparece no site.</p><small style="display:block;margin-top:6px;color:var(--muted)">Os produtos são salvos no Supabase e ficam disponíveis para todos os visitantes. "Exportar catálogo" continua disponível como backup adicional.</small></div><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end"><button class="btn btn-secondary" id="exportCatalog">Exportar catálogo</button><button class="btn btn-secondary" id="importCatalog">Importar catálogo</button><input id="importCatalogFile" type="file" accept="application/json,.json" hidden><button class="btn btn-primary" id="newProduct">+ Novo produto</button></div></div>${state.adminEditing?editor(state.adminEditing):`<div class="admin-table"><table><thead><tr><th>Produto</th><th>Marca</th><th>Preço</th><th>Status</th><th>Ações</th></tr></thead><tbody>${rows.map(p=>`<tr><td><strong>${esc(p.displayName)}</strong><br><small>${esc(p.slug)}</small></td><td>${esc(p.brand||'—')}</td><td>${money(p.pricing.basic)}</td><td><span class="status ${p.isActive?'on':'off'}">${p.isActive?'ATIVO':'ARQUIVADO'}</span></td><td><button class="btn btn-secondary" data-edit="${esc(p.id)}">Editar</button> <button class="btn ${p.isActive?'btn-danger':'btn-soft'}" data-toggle="${esc(p.id)}">${p.isActive?'Arquivar':'Restaurar'}</button></td></tr>`).join('')}</tbody></table></div>`}`,'produtos')}
 
 const field=(label,name,value='',type='text',extra='')=>`<div class="field ${extra}"><label>${label}</label><input class="input" type="${type}" name="${name}" value="${esc(value)}"></div>`;

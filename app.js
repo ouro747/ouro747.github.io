@@ -1,6 +1,6 @@
-import {DEFAULT_PRODUCTS, SECTION_KEYS, normalizeProduct} from './data.js';
-import {getAuthState,onAuthChange,signInAdmin,signOutAdmin,updateAdminPassword,loadCloudProducts,upsertCloudProduct,replaceCloudProducts,loadOrderBumps,upsertOrderBump,recordOrderBumpEvent,loadOrderBumpEvents} from './supabase.js';
-import {createCheckoutPayment} from './payment-adapter.js';
+import {DEFAULT_PRODUCTS, SECTION_KEYS, normalizeProduct} from './data.js?v=20260921-0935';
+import {getAuthState,onAuthChange,signInAdmin,signOutAdmin,updateAdminPassword,loadCloudProducts,upsertCloudProduct,replaceCloudProducts,loadOrderBumps,upsertOrderBump,recordOrderBumpEvent,loadOrderBumpEvents} from './supabase.js?v=20260921-0935';
+import {createCheckoutPayment} from './payment-adapter.js?v=20260921-0935';
 
 const app = document.querySelector('#app');
 const DB_KEY='gp_global_pharma_products_empty_v1';

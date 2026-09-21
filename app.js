@@ -836,6 +836,7 @@ function bind(){
  const cancelBump=document.querySelector('#cancelBumpEdit');if(cancelBump)cancelBump.onclick=()=>{state.orderBumpEditing=null;render()};
  const saveBump=document.querySelector('#saveOrderBump');if(saveBump)saveBump.onclick=async()=>{try{const bump=collectOrderBumpEditor();if(!bump.internalName||!bump.title){toast('Informe o nome interno e o título da oferta.');return}if(bump.priceCents<=0){toast('Informe um preço válido para o order bump.');return}saveBump.disabled=true;saveBump.textContent='Salvando...';await upsertOrderBump(bump);state.orderBumpEditing=null;await refreshOrderBumps();await refreshOrderBumpMetrics();render();toast('Order bump salvo.')}catch(err){console.error(err);toast('Não foi possível salvar o order bump.')}};
  const refreshBumpMetrics=document.querySelector('#refreshBumpMetrics');if(refreshBumpMetrics)refreshBumpMetrics.onclick=async()=>{refreshBumpMetrics.disabled=true;await refreshOrderBumpMetrics();render();toast('Métricas atualizadas.')};
+ const saveLanding=document.querySelector('#saveLandingPage');if(saveLanding)saveLanding.onclick=async()=>{const page=state.landingEditing||state.landingPages[0];const form=document.querySelector('#landingEditorForm');if(!page||!form)return;try{const updated=collectLandingEditor(form,page,slugify);if(!updated.name||!updated.slug){toast('Informe nome e slug da landing.');return}saveLanding.disabled=true;saveLanding.textContent='Salvando...';const saved=await upsertLandingPage(updated);state.landingEditing=saved;await refreshLandingPages();render();toast('Landing page salva.')}catch(err){console.error(err);saveLanding.disabled=false;saveLanding.textContent='Salvar landing';toast(err.message==='JSON da landing inválido'?'O JSON da landing contém erro de sintaxe.':'Não foi possível salvar a landing.')}};
  const np=document.querySelector('#newProduct');if(np)np.onclick=()=>{state.adminEditing=normalizeProduct({__new:true,slug:'',name:'',displayName:'',pricing:{basic:0,express:0},expressAvailable:false,isActive:true,media:[],documents:[],sourceLinks:[],reviews:[],faqs:[],importantWarnings:[],sectionVisibility:{}});state.adminEditing.__new=true;state.adminTab='geral';render()};
  document.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{state.adminEditing=structuredClone(state.products.find(p=>p.id===b.dataset.edit));state.adminTab='geral';render()});
  document.querySelectorAll('[data-toggle]').forEach(b=>b.onclick=async()=>{const p=state.products.find(p=>p.id===b.dataset.toggle);if(p){const previous=p.isActive;p.isActive=!p.isActive;try{await upsertCloudProduct(p);await refreshCloudProducts();render();toast(p.isActive?'Produto restaurado':'Produto arquivado')}catch(err){console.error(err);p.isActive=previous;toast('Não foi possível atualizar o produto.')}}});
@@ -853,6 +854,7 @@ async function initApp(){
   await refreshAuth();
   await refreshCloudProducts();
   await refreshOrderBumps();
+  await refreshLandingPages();
   if(state.isAdmin&&!state.mustChangePassword)await refreshOrderBumpMetrics();
   render();
   onAuthChange(async auth=>{
@@ -860,7 +862,7 @@ async function initApp(){
     state.authUser=auth.user;
     state.isAdmin=auth.isAdmin;
     state.mustChangePassword=auth.mustChangePassword;
-    if(changed){await refreshCloudProducts();await refreshOrderBumps();if(state.isAdmin&&!state.mustChangePassword)await refreshOrderBumpMetrics();render();}
+    if(changed){await refreshCloudProducts();await refreshOrderBumps();await refreshLandingPages();if(state.isAdmin&&!state.mustChangePassword)await refreshOrderBumpMetrics();render();}
   });
 }
 initApp();
